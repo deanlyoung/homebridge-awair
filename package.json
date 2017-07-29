@@ -1,0 +1,24 @@
+{
+  "name": "homebridge-awair",
+  "version": "0.0.1",
+  "description": "awair plugin for homebridge",
+  "license": "ISC",
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  },
+  "author": {
+    "name": "Dean L. Young"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/deanlyoung/homebridge-awair.git"
+  },
+  "dependencies": {
+    "awairnode": ">=0.1",
+    "suncalc": ">=1.8.0"
+  }
+}

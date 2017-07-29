@@ -1,0 +1,32 @@
+{
+	"bridge": {
+		"name": "Homebridge",
+		"username": "AA:BB:CC:DD:EE:FF",
+		"port": 51827,
+		"pin": "031-45-154"
+	},
+	
+	"description": "An example Homebridge config for Awair.",
+	
+	"accessories": [
+		{
+			"accessory": "Awair",
+			"name": "Example Room 1 Awair",
+			"orgToken": "AAA.AAA.AAA",
+			"devId": 123,
+			"devType": "awair",
+			"serial": "example-serial-123",
+			"model": "Awair",
+			"fetch": 5
+		},{
+			"accessory": "Awair",
+			"name": "Example Room 2 Awair Glow",
+			"orgToken": "AAA.AAA.AAA",
+			"devId": 124,
+			"devType": "awair-glow",
+			"serial": "example-serial-124",
+			"model": "Awair Glow",
+			"fetch": 5
+		}
+	]
+}
