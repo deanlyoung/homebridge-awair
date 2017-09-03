@@ -10,9 +10,7 @@
     "node": ">=0.12.0",
     "homebridge": ">=0.2.0"
   },
-  "author": {
-    "name": "Dean L. Young"
-  },
+  "author": "Dean L. Young",
   "repository": {
     "type": "git",
     "url": "git://github.com/deanlyoung/homebridge-awair.git"
@@ -20,5 +18,13 @@
   "dependencies": {
     "awairnode": ">=0.1",
     "suncalc": ">=1.8.0"
+  },
+  "bugs": {
+    "url": "https://github.com/deanlyoung/homebridge-awair/issues"
+  },
+  "homepage": "https://github.com/deanlyoung/homebridge-awair#readme",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
   }
 }
