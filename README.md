@@ -19,7 +19,7 @@ You'll need to run a few HTTP requests to obtain your device ID(s) (`devId`).
 2. 
 3. 
 
-You'll also need to gain access to and visit the [Awair developer dashboard](http://dashboard.awair.is/dashboard/devcon) to obtain your Organization Token (`orgToken`).
+You'll also need to gain access to and visit the [Awair developer dashboard](https://dashboard.getawair.com) to obtain your Organization Token (`orgToken`).
 
 The [Awair API Documentation](http://docs.enterprise.awair.is/) explains the inner workings of the Awair API, but for the most part is not necessary to use this plugin.
 
