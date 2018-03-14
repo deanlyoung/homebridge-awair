@@ -128,9 +128,15 @@ AwairAccessory.prototype = {
 				that.voc = response['sensor']['voc'];
 				if (isNaN(that.voc))
 					that.voc = 0;
-				that.dust = response['sensor']['dust'];
-				if (isNaN(that.dust))
-					that.dust = 0;
+				if (response['sensor']['dust'] != null) {
+					that.dust = response['sensor']['dust'];
+					if (isNaN(that.dust))
+						that.dust = 0;
+				} else {
+					that.dust = response['sensor']['pm25'];
+					if (isNaN(that.dust))
+						that.dust = 0;
+				}
 				
 				that.log("Current Awair stats [Device ID: " + devId + "] Temperature: " + that.temperature + ", Humidity: " + that.humidity + ", Carbon Dioxide: " + that.carbonDioxide + ", VOCs: " + that.voc + ", Dust: " + that.dust);
 				
