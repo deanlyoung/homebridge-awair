@@ -165,5 +165,4 @@ AwairAccessory.prototype = {
 			}
 		});
 	}
-	
 }
