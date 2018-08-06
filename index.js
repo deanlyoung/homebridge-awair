@@ -34,7 +34,7 @@ function AwairAccessory(log, config) {
 		}, this.polling);
 	};
 	
-	this.log.info("Using Awair ");
+	this.log.info("Using Awair...");
 }
 
 AwairAccessory.prototype = {
@@ -56,6 +56,12 @@ AwairAccessory.prototype = {
 	identify: function (callback) {
 		this.log("Identify requested!");
 		callback(); // success
+	},
+	
+	getAirQuality: function(callback) {
+		this.getAwairData(function(a) {
+			callback(null, a);
+		});
 	},
 	
 	getServices: function () {
@@ -82,7 +88,7 @@ AwairAccessory.prototype = {
 		this.temperatureService
 			.getCharacteristic(Characteristic.CurrentTemperature)
 			.setProps({ minValue: -273, maxValue: 200 })
-			.on('get', this.getAwairData.bind(this));
+			.on('get', this.getAirQuality.bind(this));
 			this.temperatureService.addCharacteristic(Characteristic.StatusFault);
 			services.push(this.temperatureService);
 		
@@ -90,7 +96,7 @@ AwairAccessory.prototype = {
 		this.humidityService
 			.getCharacteristic(Characteristics.CurrentRelativeHumidity)
 			.setProps({ minValue: 0, maxValue: 200 })
-			.on("get", this.getAwairData.bind(this));
+			.on("get", this.getAirQuality.bind(this));
 			this.humidityService.addCharacteristic(Characteristic.StatusFault);
 			services.push(this.humidityService);
 		
@@ -99,7 +105,7 @@ AwairAccessory.prototype = {
 			this.carbonDioxideService
 				.getCharacteristic(Characteristics.CarbonDioxideLevel)
 				.setProps({ minValue: 400, maxValue: 5000 })
-				.on("get", this.getAwairData.bind(this));
+				.on("get", this.getAirQuality.bind(this));
 				this.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected)
 				services.push(this.carbonDioxideService);
 		}
