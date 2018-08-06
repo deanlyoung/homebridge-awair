@@ -1,6 +1,6 @@
 {
   "name": "homebridge-awair",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "awair plugin for homebridge",
   "license": "ISC",
   "keywords": [
