@@ -3,7 +3,10 @@ var Awair = require('awairnode');
 var lowerCase = require('lower-case');
 var Service, Characteristic;
 
-var awairService;
+var airQualityService;
+var temperatureService;
+var humidityService;
+var carbonDioxideService;
 
 module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
