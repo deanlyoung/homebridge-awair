@@ -1,104 +1,55 @@
 "use strict";
 var Awair = require('awairnode');
-var inherits = require('util').inherits;
+var lowerCase = require('lower-case');
 var Service, Characteristic;
 
 var awairService;
-
-var CarbonDioxide;
-var VOC;
-var Dust;
-
-var CustomUUID = {
-	CarbonDioxide: '10c88f40-7ec4-478c-8d5a-bd0c3cce14b7',
-	VOC: 'ccc04890-565b-4376-b39a-3113341d9e0f',
-	Dust: '46f1284c-1912-421b-82f5-eb75008b167e'
-};
-
-var CustomCharacteristic = {};
 
 module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
   homebridge.registerAccessory("homebridge-awair", "Awair", AwairAccessory);
-  
-	CustomCharacteristic.CarbonDioxide = function() {
-		Characteristic.call(this, 'Carbon Dioxide', CustomUUID.CarbonDioxide);
-		this.setProps({
-			format: Characteristic.Formats.UINT16,
-			unit: "ppm",
-			maxValue: 5000,
-			minValue: 0,
-			minStep: 1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomerCharacteristic.CarbonDioxide, Characteristic);
-	
-	CustomCharacteristic.VOC = function() {
-		Characteristic.call(this, 'VOC', CustomUUID.VOC);
-			this.setProps({
-				format: Characteristic.Formats.UINT16,
-				unit: "ppb",
-				maxValue: 10000,
-				minValue: 1,
-				minStep: 1,
-				perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-			});
-			this.value = this.getDefaultValue();
-	};
-	inherits(CustomerCharacteristic.VOC, Characteristic);
-	
-	CustomCharacteristic.Dust = function() {
-		Characteristic.call(this, 'Dust', CustomUUID.Dust);
-		this.setProps({
-			format: Characteristic.Formats.FLOAT,
-			unit: "ug/m3",
-			maxValue: 500,
-			minValue: 0,
-			minStep: 0.1,
-			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-		});
-		this.value = this.getDefaultValue();
-	};
-	inherits(CustomerCharacteristic.Dust, Characteristic);
-	
 }
 
 function AwairAccessory(log, config) {
 	this.log = log;
-	this.awair = new Awair(config['orgToken']);
+	this.awair = new Awair(config['token']);
 	this.devId = config['devId'];
-	this.devType = config['devType'];
+	this.devType = lowerCase(config['devType']);
 	this.name = config['name'];
-	this.serial = config['serial'];
-	if (isNaN(this.serial))
-		this.serial = devType + "-" + devId;
-	this.model = config['model'];
-	if (isNaN(this.model))
-		this.model = this.devType;
-	this.fetch = config['fetch'];
-	if (isNaN(this.fetch))
-		this.fetch = 5;
+	this.serial = config['serial'] || devType + "-" + devId;
+	this.model = config['model'] || this.devType;
+	this.carbonDioxideThreshold = config['carbonDioxideThreshold'] || 1200;
+	this.mpolling = config['polling'] || 0;
+	this.polling = this.mpolling;
 	this.timestampOfLastUpdate = 0;
-  
-	this.informationService = new Service.AccessoryInformation();
-	this.informationService
-	.setCharacteristic(Characteristic.Manufacturer, "Awair")
-	.setCharacteristic(Characteristic.Model, this.model)
-	.setCharacteristic(Characteristic.SerialNumber, this.serial);
 	
-	this.awairStatsService = new Service.TemperatureSensor(this.name);
-	this.awairStatsService.addCharacteristic(Characteristic.CurrentRelativeHumidity);
-	this.awairStatsService.addCharacteristic(CustomCharacteristic.CarbonDioxide);
-	this.awairStatsService.addCharacteristic(CustomCharacteristic.VOC);
-	this.awairStatsService.addCharacteristic(CustomCharacteristic.Dust);
+	if (this.polling > 0) {
+		var that = this;
+		this.polling *= 60000;
+		setTimeout(function() {
+			that.servicePolling();
+		}, this.polling);
+	};
 	
-	this.updateAwairStats();
+	
 }
 
 AwairAccessory.prototype = {
+	
+	servicePolling: function(){
+		this.log.debug('Awair Polling...');
+		this.getAwairData(function(p) {
+			var that = this;
+			that.airQualityService.setCharacteristic(Characteristic.AirQuality, p);
+			that.temperatureService.setCharacteristic(Characteristic.Temperature, p);
+			that.humidityService.setCharacteristic(Characteristic.CurrentRelativeHumidity, p);
+			that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideLevel, p);
+			setTimeout(function() {
+				that.servicePolling();
+			}, that.polling);
+		}.bind(this));
+	},
 	
 	identify: function (callback) {
 		this.log("Identify requested!");
@@ -106,45 +57,113 @@ AwairAccessory.prototype = {
 	},
 	
 	getServices: function () {
-		return [this.informationService, this.awairService];
+		var services = [],
+			informationService = new Service.AccessoryInformation();
+		
+		informationService
+			.setCharacteristic(Characteristic.Manufacturer, "Awair")
+			.setCharacteristic(Characteristic.Model, this.model)
+			.setCharacteristic(Characteristic.SerialNumber, this.serial);
+			services.push(informationService);
+		
+		this.airQualityService = new Service.AirQualitySensor(this.name);
+		this.airQualityService
+			.getCharacteristic(Characteristic.AirQuality)
+			.on('get', this.getAirQuality.bind(this));
+			this.airQualityService.addCharacteristic(Characteristic.StatusFault);
+			this.airQualityService.addCharacteristic(Characteristic.PM2_5Density);
+			this.airQualityService.addCharacteristic(Characteristic.PM10Density);
+			this.airQualityService.addCharacteristic(Characteristic.VOCDensity);
+			services.push(this.airQualityService);
+		
+		this.temperatureService = new Service.TemperatureSensor(this.name);
+		this.temperatureService
+			.getCharacteristic(Characteristic.CurrentTemperature)
+			.setProps({ minValue: -273, maxValue: 200 })
+			.on('get', this.getAwairData.bind(this));
+			this.temperatureService.addCharacteristic(Characteristic.StatusFault);
+			services.push(this.temperatureService);
+		
+		this.humidityService = new Service.HumiditySensor(this.name);
+		this.humidityService
+			.getCharacteristic(Characteristics.CurrentRelativeHumidity)
+			.setProps({ minValue: 0, maxValue: 200 })
+			.on("get", this.getAwairData.bind(this));
+			this.humidityService.addCharacteristic(Characteristic.StatusFault);
+			services.push(this.humidityService);
+		
+		if () {
+			this.carbonDioxideService = new Service.CarbonDioxideSensor(this.name);
+			this.carbonDioxideService
+				.getCharacteristic(Characteristics.CarbonDioxideLevel)
+				.setProps({ minValue: 400, maxValue: 5000 })
+				.on("get", this.getAwairData.bind(this));
+				this.carbonDioxideService
+					.getCharacteristic(Characteristic.CarbonDioxideDetected)
+					.setValue( > this.carbonDioxideThreshold ? Characteristic.CarbonDioxideDetected.CO2_LEVELS_ABNORMAL : Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL)
+				services.push(this.carbonDioxideService);
+		}
+		
+		return services;
 	},
 	
-	updateAwairStats: function () {
-		var that = this
+	getAwairData: function () {
+		var that = this;
 		
 		that.awair.scoreLatest().request(that.devId, that.devType, function(err, response){
-			if (!err && response['sensor'] && response['sensor']['temp']) {
-				that.timestampOfLastUpdate = Date.now() / 1000 | 0;
+			if (!err && response['data']) {
+				var temp;
+				for(var i = 0; i < response['data']['sensors'].length; i++) {
+					if(response['data']['sensors'][i]['comp'] == 'temp') {
+						temp = parseFloat(response['data']['sensors'][i]['value']);
+					}
+				}
 				
-				that.temperature = response['sensor']['temp'];
-				if (isNaN(that.temperature))
-					that.temperature = 0;
-				that.humidity = response['sensor']['humid'];
-				if (isNaN(that.humidity))
-					that.humidity = 0;
-				that.carbonDioxide = response['sensor']['co2'];
-				if (isNaN(that.carbonDioxide))
-					that.carbonDioxide = 0;
-				that.voc = response['sensor']['voc'];
-				if (isNaN(that.voc))
-					that.voc = 0;
-				that.dust = response['sensor']['dust'];
-				if (isNaN(that.dust))
-					that.dust = 0;
+				for (var sensor in response['data']['sensors']) {
+					switch (response['data']['sensors'][sensor]['comp']) {
+						case 'temp':
+							that.temperatureService.setCharacteristic(Characteristic.StatusFault,0);
+							that.temperatureService.setCharacteristic(Characteristic.CurrentTemperature,parseFloat(response['data']['sensors'][sensor]['value']));
+							break;
+						case 'humid':
+							that.humidityService.setCharacteristic(Characteristic.StatusFault,0);
+							that.humidityService.setCharacteristic(Characteristic.CurrentRelativeHumidity,parseFloat(response['data']['sensors'][sensor]['value']));
+							break;
+						case 'co2':
+							that.carbonDioxideService.setCharacteristic(Characteristic.StatusFault,0);
+							that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideLevel,parseFloat(response['data']['sensors'][sensor]['value']));
+							break;
+						case 'voc':
+							that.airQualityService.setCharacteristic(Characteristic.StatusFault,0);
+							var voc = parseFloat(response['data']['sensors'][sensor]['value']);
+							voc = (voc * 12.187 * 111.86)/(273.15 + temp)
+							that.airQualityService.setCharacteristic(Characteristic.VOCDensity,parseFloat(voc));
+							break;
+						case 'dust':
+							that.airQualityService.setCharacteristic(Characteristic.StatusFault,0);
+							that.airQualityService.setCharacteristic(Characteristic.PM10Density,parseFloat(response['data']['sensors'][sensor]['value']));
+							break;
+						case 'pm25':
+							that.airQualityService.setCharacteristic(Characteristic.StatusFault,0);
+							that.airQualityService.setCharacteristic(Characteristic.PM2_5Density,parseFloat(response['data']['sensors'][sensor]['value']));
+							break;
+						case 'pm10':
+							that.airQualityService.setCharacteristic(Characteristic.StatusFault,0);
+							that.airQualityService.setCharacteristic(Characteristic.PM10Density,parseFloat(response['data']['sensors'][sensor]['value']));
+							break;
+					}
+				}
 				
-				that.log("Current Awair stats [Device ID: " + devId + "] Temperature: " + that.temperature + ", Humidity: " + that.humidity + ", Carbon Dioxide: " + that.carbonDioxide + ", VOCs: " + that.voc + ", Dust: " + that.dust);
-				
-				that.awairService.setCharacteristic(Characteristic.CurrentTemperature, that.temperature);
-				that.awairService.setCharacteristic(Characteristic.CurrentRelativeHumidity, that.humidity);
-				that.awairService.setCharacteristic(CustomCharacteristic.CarbonDioxide, that.carbonDioxide);
-				that.awairService.setCharacteristic(CustomCharacteristic.VOC, that.voc);
-				that.awairService.setCharacteristic(CustomCharacteristic.Dust, that.dust);
+				that.log.debug(JSON.stringify(JSON.parse(response),null,2););
 			} else {
-				that.log("Error retrieving the Awair stats")
+				that.airQualityService.setCharacteristic(Characteristic.StatusFault,1);
+				that.temperatureService.setCharacteristic(Characteristic.StatusFault,1);
+				that.humidityService.setCharacteristic(Characteristic.StatusFault,1);
+				that.carbonDioxideService.setCharacteristic(Characteristic.StatusFault,1);
+				
+				that.log.error(JSON.stringify(JSON.parse(err),null,2););
 			}
 		});
-		
-		setTimeout(this.updateAwairStats.bind(this), this.fetch * 60 * 1000);
 	}
 	
 }

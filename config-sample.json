@@ -12,21 +12,52 @@
 		{
 			"accessory": "Awair",
 			"name": "Example Room 1 Awair",
-			"orgToken": "AAA.AAA.AAA",
+			"token": "AAA.AAA.AAA",
 			"devId": 123,
 			"devType": "awair",
 			"serial": "example-serial-123",
 			"model": "Awair",
-			"fetch": 5
+			"carbonDioxideThreshold": 1200,
+			"polling": 15
 		},{
 			"accessory": "Awair",
 			"name": "Example Room 2 Awair Glow",
-			"orgToken": "AAA.AAA.AAA",
+			"token": "AAA.AAA.AAA",
 			"devId": 124,
 			"devType": "awair-glow",
 			"serial": "example-serial-124",
 			"model": "Awair Glow",
-			"fetch": 5
+			"carbonDioxideThreshold": 1200,
+			"polling": 15
+		},{
+			"accessory": "Awair",
+			"name": "Example Room 3 Awair Mint",
+			"token": "AAA.AAA.AAA",
+			"devId": 125,
+			"devType": "awair-mint",
+			"serial": "example-serial-125",
+			"model": "Awair Mint",
+			"polling": 15
+		},{
+			"accessory": "Awair",
+			"name": "Example Room 4 Awair Omni",
+			"token": "AAA.AAA.AAA",
+			"devId": 126,
+			"devType": "awair-omni",
+			"serial": "example-serial-126",
+			"model": "Awair Omni",
+			"carbonDioxideThreshold": 1200,
+			"polling": 15
+		},{
+			"accessory": "Awair",
+			"name": "Example Room 5 Awair 2nd Edition",
+			"token": "AAA.AAA.AAA",
+			"devId": 127,
+			"devType": "awair-r2",
+			"serial": "example-serial-127",
+			"model": "Awair 2nd Edition",
+			"carbonDioxideThreshold": 1200,
+			"polling": 15
 		}
 	]
 }
