@@ -19,10 +19,9 @@ function AwairAccessory(log, config) {
 	this.name = config['name'];
 	this.serial = config['serial'] || devType + "-" + devId;
 	this.model = config['model'] || this.devType;
-	this.carbonDioxideThreshold = config['carbonDioxideThreshold'] || 1200;
+	this.carbonDioxideThreshold = config['carbonDioxideThreshold'] || 0;
 	this.mpolling = config['polling'] || 0;
 	this.polling = this.mpolling;
-	this.timestampOfLastUpdate = 0;
 	
 	if (this.polling > 0) {
 		var that = this;
@@ -32,7 +31,7 @@ function AwairAccessory(log, config) {
 		}, this.polling);
 	};
 	
-	
+	this.log.info("Using Awair ");
 }
 
 AwairAccessory.prototype = {
@@ -92,15 +91,13 @@ AwairAccessory.prototype = {
 			this.humidityService.addCharacteristic(Characteristic.StatusFault);
 			services.push(this.humidityService);
 		
-		if () {
+		if (this.carbonDioxideThreshold > 0) {
 			this.carbonDioxideService = new Service.CarbonDioxideSensor(this.name);
 			this.carbonDioxideService
 				.getCharacteristic(Characteristics.CarbonDioxideLevel)
 				.setProps({ minValue: 400, maxValue: 5000 })
 				.on("get", this.getAwairData.bind(this));
-				this.carbonDioxideService
-					.getCharacteristic(Characteristic.CarbonDioxideDetected)
-					.setValue( > this.carbonDioxideThreshold ? Characteristic.CarbonDioxideDetected.CO2_LEVELS_ABNORMAL : Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL)
+				this.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected)
 				services.push(this.carbonDioxideService);
 		}
 		
@@ -131,7 +128,11 @@ AwairAccessory.prototype = {
 							break;
 						case 'co2':
 							that.carbonDioxideService.setCharacteristic(Characteristic.StatusFault,0);
-							that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideLevel,parseFloat(response['data']['sensors'][sensor]['value']));
+							var co2 = parseFloat(response['data']['sensors'][sensor]['value']);
+							that.carbonDioxideService
+								.setCharacteristic(Characteristic.CarbonDioxideLevel,co2);
+							that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected)
+								.setValue(co2 > this.carbonDioxideThreshold ? Characteristic.CarbonDioxideDetected.CO2_LEVELS_ABNORMAL : Characteristic.CarbonDioxideDetected.CO2_LEVELS_NORMAL)
 							break;
 						case 'voc':
 							that.airQualityService.setCharacteristic(Characteristic.StatusFault,0);
