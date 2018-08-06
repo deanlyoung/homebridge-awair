@@ -1,5 +1,5 @@
 "use strict";
-var Awair = require('awairnode');
+var awair = require('awairnode');
 var lowerCase = require('lower-case');
 var Service, Characteristic;
 
@@ -65,8 +65,8 @@ AwairAccessory.prototype = {
 	},
 	
 	getServices: function () {
-		var services = [],
-			informationService = new Service.AccessoryInformation();
+		var services = []
+		var informationService = new Service.AccessoryInformation();
 		
 		informationService
 			.setCharacteristic(Characteristic.Manufacturer, "Awair")
@@ -116,7 +116,7 @@ AwairAccessory.prototype = {
 	getAwairData: function () {
 		var that = this;
 		
-		that.awair.scoreLatest().request(that.devId, that.devType, function(err, response){
+		that.awair.scoreLatest().request(that.devType, that.devId, function(err, response){
 			if (!err && response['data']) {
 				var temp;
 				for(var i = 0; i < response['data']['sensors'].length; i++) {
@@ -162,6 +162,23 @@ AwairAccessory.prototype = {
 							that.airQualityService.setCharacteristic(Characteristic.PM10Density,parseFloat(response['data']['sensors'][sensor]['value']));
 							break;
 					}
+				}
+				
+				var score = parseFloat(response['data']['score']);
+				if (!score) {
+					return(0); // Error or unknown response
+				} else if (score >= 90) {
+					return(1); // Return EXCELLENT
+				} else if (score >= 80 && score < 90) {
+					return(2); // Return GOOD
+				} else if (score >= 60 && score < 70) {
+					return(3); // Return FAIR
+				} else if (score >= 50 && score < 60) {
+					return(4); // Return INFERIOR
+				} else if (score < 50) {
+					return(5); // Return POOR
+				} else {
+					return(0); // Error or unknown response.
 				}
 				
 				that.log.debug(JSON.stringify(JSON.parse(response),null,2););
