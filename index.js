@@ -182,18 +182,14 @@ AwairAccessory.prototype = {
 					return(0); // Error or unknown response.
 				}
 				
-				that.log.debug(
-					JSON.stringify(response,null,2);
-				);
+				that.log.debug(JSON.stringify(response),null,2);
 			} else {
 				that.airQualityService.setCharacteristic(Characteristic.StatusFault,1);
 				that.temperatureService.setCharacteristic(Characteristic.StatusFault,1);
 				that.humidityService.setCharacteristic(Characteristic.StatusFault,1);
 				that.carbonDioxideService.setCharacteristic(Characteristic.StatusFault,1);
 				
-				that.log.error(
-					JSON.stringify(err,null,2);
-				);
+				that.log.error(JSON.stringify(err),null,2);
 			}
 		});
 	}
