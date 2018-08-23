@@ -1,5 +1,6 @@
 "use strict";
-var awair = require('awairnode');
+var Awair = require('./node_modules/awairnode/lib/awairnode');
+var request = require('request');
 var lowerCase = require('lower-case');
 var Service, Characteristic;
 
