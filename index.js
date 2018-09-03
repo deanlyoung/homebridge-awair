@@ -180,7 +180,7 @@ Awair.prototype = {
 		
 		if (this.polling_interval > 0) {
 			this.timer = setInterval(
-				this.getData.bind(that),
+				this.getData.bind(this),
 				this.polling_interval * 1000
 			);
 		}
