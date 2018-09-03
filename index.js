@@ -40,7 +40,7 @@ Awair.prototype = {
 		return request(options)
 			.then(function(response) {
 				var data = response.data[0];
-			
+				
 				that.airQualityService
 					.setCharacteristic(Characteristic.AirQuality, that.convertScore(data.score));
 				that.airQualityService.isPrimaryService = true;
@@ -88,7 +88,7 @@ Awair.prototype = {
 							break;
 						case "voc":
 							var voc = sensors[sensor].value;
-							voc = (voc * 72.66578273019740 * atmos * 101.32) / ((273.15 + temp) * 8.3144);
+							voc = that.convertChemicals(voc, atmos, temp);
 							that.log('tvoc: ' + voc + ' ug/m^3');
 							// Chemicals (ug/m^3)
 							that.airQualityService
@@ -118,6 +118,16 @@ Awair.prototype = {
 				.catch(function(err) {
 					that.log("Error contacting Awair API: " + err);
 				});
+	},
+	
+	convertChemicals: function(voc, atmos, temp) {
+		var voc = parseFloat(voc);
+		var atmos = parseFloat(atmos);
+		var temp = parseFloat(temp);
+		var vocString = '(' + voc + ' * 72.66578273019740 * ' + atmos + ' * 101.32) / ((273.15 + ' + temp + ') * 8.3144)';
+		voc = (voc * 72.66578273019740 * atmos * 101.32) / ((273.15 + temp) * 8.3144);
+		this.log('equation: ' + vocString);
+		return voc;
 	},
 	
 	convertScore: function(score) {
