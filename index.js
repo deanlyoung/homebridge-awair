@@ -89,6 +89,7 @@ Awair.prototype = {
 						case "voc":
 							var voc = sensors[sensor].value;
 							voc = (voc * 72.66578273019740 * atmos * 101.32) / ((273.15 + temp) * 8.3144);
+							that.log('tvoc: ' + voc + ' ug/m^3');
 							// Chemicals (ug/m^3)
 							that.airQualityService
 								.setCharacteristic(Characteristic.VOCDensity, voc);
