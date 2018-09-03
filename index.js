@@ -179,16 +179,6 @@ Awair.prototype = {
 				.setCharacteristic(Characteristic.CarbonDioxideLevel, "--");
 		}
 		
-		if (this.polling_interval > 0) {
-			this.timer = setInterval(
-				this.getData.bind(this),
-				this.polling_interval * 1000
-			);
-		}
-		
-		// Get tnitial state
-		this.getData().bind(this);
-		
 		this.informationService = informationService;
 		sensorList.push(informationService);
 		this.airQualityService = airQualityService;
@@ -201,6 +191,16 @@ Awair.prototype = {
 			this.carbonDioxideService = carbonDioxideService;
 			sensorList.push(carbonDioxideService);
 		}
+		
+		if (this.polling_interval > 0) {
+			this.timer = setInterval(
+				this.getData.bind(this),
+				this.polling_interval * 1000
+			);
+		}
+		
+		// Get tnitial state
+		this.getData().bind(this);
 		
 		return sensorList;
 	}
