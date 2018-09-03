@@ -134,16 +134,13 @@ Awair.prototype = {
 			.setCharacteristic(Characteristic.PM10Density, "--");
 		
 		temperatureService
-			.setCharacteristic(Characteristic.CurrentTemperature, "--")
-			.setProps({ minValue: -273, maxValue: 200 });
+			.setCharacteristic(Characteristic.CurrentTemperature, "--");
 		
 		humidityService
-			.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--")
-			.setProps({ minValue: 0, maxValue: 100 });
+			.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--");
 		
 		carbonDioxideService
-			.setCharacteristic(Characteristic.CarbonDioxideLevel, "--")
-			.setProps({ minValue: 400, maxValue: 5000 });
+			.setCharacteristic(Characteristic.CarbonDioxideLevel, "--");
 		
 		this.informationService = informationService;
 		this.airQualityService = airQualityService;
