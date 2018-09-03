@@ -39,7 +39,6 @@ Awair.prototype = {
 		return request(options)
 			.then(function(response) {
 				var data = response.data[0];
-				that.log("%d readings collected", data.length);
 			
 				that.airQualityService
 					.setCharacteristic(Characteristic.AirQuality, that.convertScore(data.score));
@@ -54,6 +53,8 @@ Awair.prototype = {
 					sensors[comp] = val;
 					return sensors;
 				});
+				
+				that.log(sense);
 				
 				var temp = sense.temp;
 				var atmos = 1;
