@@ -16,9 +16,9 @@ function Awair(log, config) {
 	this.devType = config["devType"];
 	this.devId = config["devId"];
 	this.serial = config['serial'] || this.devType + "-" + this.devId;
-	this.carbonDioxideThreshold = config['carbonDioxideThreshold'] || 1000;
-	this.polling_interval = Number(config["polling_interval"] || 1800); // Seconds, 15 mins
-	this.endpoint = config["endpoint"] || "15-min-avg";
+	this.carbonDioxideThreshold = config['carbonDioxideThreshold'] || 0; // ppm, 0 = OFF
+	this.polling_interval = Number(config["polling_interval"] || 900); // seconds (15 mins)
+	this.endpoint = config["endpoint"] || "15-min-avg"; // 15-min-avg, 5-min-avg, raw, latest
 	this.url = config["url"] || "http://developer-apis.awair.is/v1/users/self/devices/" + this.devType + "/" + this.devId + "/air-data/" + this.endpoint +'?limit=1&desc=true';
 }
 
@@ -78,9 +78,10 @@ Awair.prototype = {
 							break;
 						case "co2":
 							// Carbon Dioxide (ppm)
+							var co2 = sensors[sensor].value;
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, sensors[sensor].value);
-							if (sensors[sensor].value >= this.carbonDioxideThreshold) {
+							if ((this.carbonDioxideThreshold) > 0 && (co2 >= this.carbonDioxideThreshold) {
 								that.carbonDioxideService
 									.setCharacteristic(Characteristic.CarbonDioxideDetected);
 							}
@@ -146,8 +147,6 @@ Awair.prototype = {
 			.setCharacteristic(Characteristic.Model, this.devType)
 			.setCharacteristic(Characteristic.SerialNumber, this.serial)
 			.setCharacteristic(Characteristic.FirmwareRevision, packageJSON.version);
-		this.informationService = informationService;
-		sensorList.push(informationService);
 		
 		var airQualityService = new Service.AirQualitySensor();
 		airQualityService
@@ -162,27 +161,19 @@ Awair.prototype = {
 				}
 			}
 		}
-		this.airQualityService = airQualityService;
-		sensorList.push(airQualityService);
 		
 		var temperatureService = new Service.TemperatureSensor();
 		temperatureService
 			.setCharacteristic(Characteristic.CurrentTemperature, "--");
-		this.temperatureService = temperatureService;
-		sensorList.push(temperatureService);
 		
 		var humidityService = new Service.HumiditySensor();
 		humidityService
 			.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--");
-		this.humidityService = humidityService;
-		sensorList.push(humidityService);
 		
 		if (this.devType != 'awair-mint') {
 			var carbonDioxideService = new Service.CarbonDioxideSensor();
 			carbonDioxideService
 				.setCharacteristic(Characteristic.CarbonDioxideLevel, "--");
-			this.carbonDioxideService = carbonDioxideService;
-			sensorList.push(carbonDioxideService);
 		}
 		
 		if (this.polling_interval > 0) {
@@ -194,6 +185,19 @@ Awair.prototype = {
 		
 		// Get tnitial state
 		this.getData().bind(this);
+		
+		this.informationService = informationService;
+		sensorList.push(informationService);
+		this.airQualityService = airQualityService;
+		sensorList.push(airQualityService);
+		this.temperatureService = temperatureService;
+		sensorList.push(temperatureService);
+		this.humidityService = humidityService;
+		sensorList.push(airQualityService);
+		if (this.devType != 'awair-mint') {
+			this.carbonDioxideService = carbonDioxideService;
+			sensorList.push(carbonDioxideService);
+		}
 		
 		return sensorList;
 	}
