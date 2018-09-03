@@ -1,5 +1,6 @@
 var Service, Characteristic;
 var request = require("request-promise");
+const packageJSON = require("./package.json");
 
 module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
@@ -17,7 +18,7 @@ function Awair(log, config) {
 	this.serial = config['serial'] || devType + "-" + devId;
 	this.carbonDioxideThreshold = config['carbonDioxideThreshold'] || 1000;
 	this.polling_interval = Number(config["polling_interval"] || 1800); // Seconds, 15 mins
-	this.url = config["url"] || "http://developer-apis.awair.is/v1/users/self/devices/" + this.deviceType + "/" + this.deviceId + "/air-data/latest";
+	this.url = config["url"] || "http://developer-apis.awair.is/v1/users/self/devices/" + this.deviceType + "/" + this.deviceId + "/air-data/15-min-avg?desc=true&limit=1";
 }
 
 Awair.prototype = {
@@ -41,8 +42,20 @@ Awair.prototype = {
 			
 				that.airQualityService
 					.setCharacteristic(Characteristic.AirQuality, that.convertScore(data.score));
+				that.airQualityService.isPrimaryService = true;
+				that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
 				
 				var sensors = data.sensors;
+				
+				var sense = sensors.reduce( (sensors, sensor) => {
+					var comp = sensor.comp;
+					var val = sensor.value;
+					sensors[comp] = val;
+					return sensors;
+				});
+				
+				var temp = sense.temp;
+				var atmos = 1;
 				
 				for (sensor in sensors) {
 					switch (sensors[sensor].comp) {
@@ -66,9 +79,11 @@ Awair.prototype = {
 							}
 							break;
 						case "voc":
+							var voc = sensors[sensor].value;
+							voc = (voc * 72.66578273019740 * atmos * 101.32) / ((273.15 + temp) * 8.3144);
 							// Chemicals (ppb)
 							that.airQualityService
-								.setCharacteristic(Characteristic.VOCDensity, sensors[sensor].value);
+								.setCharacteristic(Characteristic.VOCDensity, voc);
 							break;
 						case "dust":
 							// Dust (mcg/m^3)
@@ -125,7 +140,8 @@ Awair.prototype = {
 		informationService
 			.setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
 			.setCharacteristic(Characteristic.Model, this.deviceType)
-			.setCharacteristic(Characteristic.SerialNumber, this.serial);
+			.setCharacteristic(Characteristic.SerialNumber, this.serial)
+			.setCharacteristic(Characteristic.FirmwareRevision, packageJSON.version);
 		
 		airQualityService
 			.setCharacteristic(Characteristic.AirQuality, "--")
