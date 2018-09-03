@@ -180,17 +180,20 @@ Awair.prototype = {
 		}
 		
 		this.informationService = informationService;
-		sensorList.push(informationService);
 		this.airQualityService = airQualityService;
-		sensorList.push(airQualityService);
 		this.temperatureService = temperatureService;
-		sensorList.push(temperatureService);
 		this.humidityService = humidityService;
-		sensorList.push(airQualityService);
 		if (this.devType != 'awair-mint') {
 			this.carbonDioxideService = carbonDioxideService;
+		}
+		sensorList.push(informationService);
+		sensorList.push(airQualityService);
+		sensorList.push(temperatureService);
+		sensorList.push(airQualityService);
+		if (this.devType != 'awair-mint') {
 			sensorList.push(carbonDioxideService);
 		}
+		this.log(sensorList);
 		
 		if (this.polling_interval > 0) {
 			this.timer = setInterval(
