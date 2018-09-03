@@ -40,61 +40,70 @@ Add the following information to your config file (note: shown with (5) example 
 		"name": "Example Room 1 Awair",
 		"token": "AAA.AAA.AAA",
 		"devType": "awair",
-		"devId": 123,
-		"serial": "example-serial-123",
+		"devId": "123",
+		"serial": "example-serial_123",
 		"model": "Awair",
 		"carbonDioxideThreshold": 1200,
+		"endpoint": "15-min-avg",
 		"polling": 15
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 2 Awair Glow",
 		"token": "AAA.AAA.AAA",
 		"devType": "awair-glow",
-		"devId": 124,
-		"serial": "example-serial-124",
+		"devId": "124",
+		"serial": "example-serial_124",
 		"model": "Awair Glow",
 		"carbonDioxideThreshold": 1200,
+		"endpoint": "15-min-avg",
 		"polling": 15
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 3 Awair Mint",
 		"token": "AAA.AAA.AAA",
 		"devType": "awair-mint",
-		"devId": 125,
-		"serial": "example-serial-125",
+		"devId": "125",
+		"serial": "example-serial_125",
 		"model": "Awair Mint",
+		"endpoint": "15-min-avg",
 		"polling": 15
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 4 Awair Omni",
 		"token": "AAA.AAA.AAA",
 		"devType": "awair-omni",
-		"devId": 126,
-		"serial": "example-serial-126",
+		"devId": "126",
+		"serial": "example-serial_126",
 		"model": "Awair Omni",
 		"carbonDioxideThreshold": 1200,
+		"endpoint": "15-min-avg",
 		"polling": 15
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 5 Awair 2nd Edition",
 		"token": "AAA.AAA.AAA",
 		"devType": "awair-r2",
-		"devId": 127,
-		"serial": "example-serial-127",
+		"devId": "127",
+		"serial": "example-serial_127",
 		"model": "Awair 2nd Edition",
 		"carbonDioxideThreshold": 1200,
+		"endpoint": "15-min-avg",
 		"polling": 15
 	}
 ]
 ```
 
+`accessory`					=> The Homebridge Accessory (REQUIRED, must be exactly: `Awair`)
+`name`						=> The accessory name that appears by default in HomeKit (REQUIRED, can be anything)
 `token`						=> Developer Token (REQUIRED, see [Installation](#installation))
 `devType`					=> Device Type (REQUIRED, options: `awair`, `awair-glow`, `awair-mint`, `awair-omni`, or `awair-r2`)
-`devId` 					=> Device ID (REQUIRED, see Installation)
-`serial`					=> Serial Number (OPTIONAL, default = `devType-devId`, options: `mac-address` or `devType-devId`)
+`devId` 					=> Device ID (REQUIRED, see [Installation](#installation))
+`serial`					=> Serial Number (OPTIONAL, default = `devType_devId`, options: `mac-address` or `devType-devId`)
 `model`						=> Device Model (OPTIONAL, default = `devType`, options: `Awair`, `Awair Glow`, `Awair Mint`, `Awair Omni`, `Awair 2nd Edition`)
 `carbonDioxideThreshold`	=> (OPTIONAL, default = `0` [i.e. OFF], the level at which HomeKit will trigger an alert for the CO2 in ppm)
+`endpoint`					=> The `air-data` endpoint to use (OPTIONAL, default = `15-min-avg`, `5-min-avg`, `raw` (10 second), or `latest`)
 `polling`					=> The frequency (OPTIONAL, default = `15`, units: minutes, that you would like to update the data in HomeKit)
+`url`						=> The Awair url to poll (OPTIONAL, default = `http://developer-apis.awair.is/v1/users/self/devices/:device_type/:device_id/air-data/:endpoint?limit=1&desc=true`, editing not recommended)
 
 # API Response
 
