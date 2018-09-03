@@ -28,8 +28,7 @@ Awair.prototype = {
 			uri: this.url,
 			json: true,
 			headers: {
-				Authorization: "Bearer " + this.token,
-				"User-Agent": "Homebridge Plugin"
+				Authorization: "Bearer " + this.token
 			}
 		};
 		
