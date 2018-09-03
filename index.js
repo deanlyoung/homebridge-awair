@@ -13,9 +13,9 @@ function Awair(log, config) {
 	this.log = log;
 	this.token = config["token"];
 	this.manufacturer = config["manufacturer"] || "Awair";
-	this.deviceType = config["deviceType"] || "awair";
+	this.deviceType = config["deviceType"];
 	this.deviceId = config["deviceId"];
-	this.serial = config['serial'] || devType + "-" + devId;
+	this.serial = config['serial'] || this.devType + "-" + this.devId;
 	this.carbonDioxideThreshold = config['carbonDioxideThreshold'] || 1000;
 	this.polling_interval = Number(config["polling_interval"] || 1800); // Seconds, 15 mins
 	this.url = config["url"] || "http://developer-apis.awair.is/v1/users/self/devices/" + this.deviceType + "/" + this.deviceId + "/air-data/15-min-avg?desc=true&limit=1";
@@ -100,13 +100,14 @@ Awair.prototype = {
 								.setCharacteristic(Characteristic.PM10Density, sensors[sensor].value);
 							break;
 						default:
-							console.log("ignore: " + sensors[sensor].comp);
+							that.log("ignore: " + sensors[sensor].comp);
 							break;
 					}
 				}
 			})
 				.catch(function(err) {
 					that.log("Error contacting Awair API: " + err);
+					that.log(url);
 				});
 	},
 	
