@@ -158,7 +158,6 @@ Awair.prototype = {
 			.setCharacteristic(Characteristic.VOCDensity, "--")
 			.setCharacteristic(Characteristic.PM10Density, "--")
 			.setCharacteristic(Characteristic.PM2_5Density, "--");
-		}
 		
 		temperatureService
 			.setCharacteristic(Characteristic.CurrentTemperature, "--");
