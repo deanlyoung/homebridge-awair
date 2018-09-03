@@ -55,7 +55,7 @@ Awair.prototype = {
 					return compSensors;
 				});
 				
-				that.log(sense);
+				that.log(JSON.stringify(sense));
 				
 				var temp = sense.temp;
 				var atmos = 1;
