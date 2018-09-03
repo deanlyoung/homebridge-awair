@@ -1,31 +1,39 @@
 {
-  "name": "homebridge-awair",
-  "version": "1.3.2",
-  "description": "awair plugin for homebridge",
-  "license": "ISC",
-  "keywords": [
-    "homebridge-plugin"
-  ],
-  "engines": {
-    "node": ">=0.12.0",
-    "homebridge": ">=0.2.0"
-  },
-  "author": "Dean L. Young",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/deanlyoung/homebridge-awair.git"
-  },
-  "dependencies": {
-    "awairnode": ">=0.1",
-    "suncalc": ">=1.8.0"
-  },
-  "bugs": {
-    "url": "https://github.com/deanlyoung/homebridge-awair/issues"
-  },
-  "homepage": "https://github.com/deanlyoung/homebridge-awair#readme",
-  "main": "index.js",
-  "scripts": {
-    "test": "test"
-  },
-  "devDependencies": {}
+	"name": "homebridge-awair",
+	"version": "1.0.0",
+	"description": "Awair accessory plugin for homebridge: https://github.com/nfarina/homebridge",
+	"main": "index.js",
+	"keywords": [
+		"homebridge",
+		"homebridge-plugin",
+		"air quality sensor",
+		"temperature sensor",
+		"humidity sensor",
+		"carbon dioxide sensor",
+		"awair",
+		"awair glow",
+		"awair mint",
+		"awair omni",
+		"awair 2nd edition"
+	],
+	"engines": {
+		"node": ">=6.0.0",
+		"homebridge": ">=0.2.0"
+	},
+	"author": {
+		"name": "Dean L. Young"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/deanlyoung/homebridge-awair.git"
+	},
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/deanlyoung/homebridge-awair/issues"
+	},
+	"homepage": "https://github.com/deanlyoung/homebridge-awair#readme",
+	"dependencies": {
+		"request": "2.88.0",
+		"request-promise": "4.2.2"
+	}
 }

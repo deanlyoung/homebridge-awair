@@ -1,0 +1,31 @@
+{
+  "data": [{
+    "timestamp": "2018-08-27T23:15:00.000Z",
+    "score": 87.0,
+    "sensors": [{
+      "comp": "temp",
+      "value": 24.56
+    }, {
+      "comp": "humid",
+      "value": 45.43
+    }, {
+      "comp": "co2",
+      "value": 1703.0
+    }, {
+      "comp": "voc",
+      "value": 175.0
+    }],
+    "indices": [{
+      "comp": "temp",
+      "value": 0.0
+    }, {
+      "comp": "humid",
+      "value": 0.0
+    }, {
+      "comp": "co2",
+      "value": 2.1
+    }, {
+      "comp": "voc",
+      "value": 0.0
+    }]
+}

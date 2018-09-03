@@ -1,6 +1,8 @@
 # homebridge-awair
 Awair plugin for homebridge: https://github.com/nfarina/homebridge
 
+Based on the great work of [@henrypoydar](https://github.com/henrypoydar).
+
 This is a very basic plugin for Nfarina's amazing [Homebridge project](https://github.com/nfarina/homebridge). It will fetch current sensor conditions from an Awair device (e.g. Awair, Awair Glow, Awair Mint, Awair Omni, or Awair 2nd Edition) and provide available sensor readings (e.g. temperature, humidity, carbon dioxide, TVOC, and dust/PM2.5/PM10) information for HomeKit.
 
 You can look at the current Awair information via HomeKit enabled Apps on your iOS device or even ask Siri for them.
@@ -9,8 +11,8 @@ It will get new data once every 15 minutes (default), but it can be customized i
 
 # Installation
 
-1. Install homebridge using: `npm install -g homebridge` or `sudo npm install -g homebridge`
-2. Install this plugin using: `npm install -g homebridge-awair` or `sudo npm install -g homebridge-awair`
+1. Install homebridge using: `[sudo] npm install -g homebridge`
+2. Install this plugin using: `[sudo] npm install -g homebridge-awair`
 3. Update your configuration file. See the sample below.
 
 You'll need to run an HTTP request to obtain each Awair's device ID (`devId`) and device type (`devType`).
@@ -93,3 +95,17 @@ Add the following information to your config file (note: shown with (5) example 
 `model`						=> Device Model (OPTIONAL, default = `devType`, options: `Awair`, `Awair Glow`, `Awair Mint`, `Awair Omni`, `Awair 2nd Edition`)
 `carbonDioxideThreshold`	=> (OPTIONAL, default = `0` [i.e. OFF], the level at which HomeKit will trigger an alert for the CO2 in ppm)
 `polling`					=> The frequency (OPTIONAL, default = `15`, units: minutes, that you would like to update the data in HomeKit)
+
+# API Response
+
+See response.sample.json
+
+# Resources
+
+- Awair API: https://docs.developer.getawair.com/
+- Homebridge: https://github.com/nfarina/homebridge
+- Homebridge plugin development: http://blog.theodo.fr/2017/08/make-siri-perfect-home-companion-devices-not-supported-apple-homekit/
+- List of Services and conventions: https://github.com/KhaosT/HAP-NodeJS/blob/master/lib/gen/HomeKitTypes.js
+- Another Awair plugin: https://github.com/henrypoydar/homebridge-awair-glow
+- Reference AQ plugin: https://github.com/toto/homebridge-airrohr
+- Refenerce temperature plugin: https://github.com/metbosch/homebridge-http-temperature
