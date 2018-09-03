@@ -1,6 +1,6 @@
 {
 	"name": "homebridge-awair",
-	"version": "2.4.7",
+	"version": "2.4.8",
 	"description": "Awair accessory plugin for homebridge: https://github.com/nfarina/homebridge",
 	"main": "index.js",
 	"keywords": [
