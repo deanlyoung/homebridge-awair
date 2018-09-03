@@ -32,6 +32,8 @@ Awair.prototype = {
 			}
 		};
 		
+		this.log(this.url);
+		
 		var that = this;
 		
 		return request(options)
@@ -107,7 +109,6 @@ Awair.prototype = {
 			})
 				.catch(function(err) {
 					that.log("Error contacting Awair API: " + err);
-					that.log(options);
 				});
 	},
 	
