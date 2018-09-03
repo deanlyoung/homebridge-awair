@@ -142,13 +142,19 @@ Awair.prototype = {
 		var sensorList = [];
 		
 		var informationService = new Service.AccessoryInformation();
+		var airQualityService = new Service.AirQualitySensor();
+		var temperatureService = new Service.TemperatureSensor();
+		var humidityService = new Service.HumiditySensor();
+		if (this.devType != 'awair-mint') {
+			var carbonDioxideService = new Service.CarbonDioxideSensor();
+		}
+		
 		informationService
 			.setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
 			.setCharacteristic(Characteristic.Model, this.devType)
 			.setCharacteristic(Characteristic.SerialNumber, this.serial)
 			.setCharacteristic(Characteristic.FirmwareRevision, packageJSON.version);
 		
-		var airQualityService = new Service.AirQualitySensor();
 		airQualityService
 			.setCharacteristic(Characteristic.AirQuality, "--")
 			.setCharacteristic(Characteristic.VOCDensity, "--");
@@ -162,16 +168,13 @@ Awair.prototype = {
 			}
 		}
 		
-		var temperatureService = new Service.TemperatureSensor();
 		temperatureService
 			.setCharacteristic(Characteristic.CurrentTemperature, "--");
 		
-		var humidityService = new Service.HumiditySensor();
 		humidityService
 			.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--");
 		
 		if (this.devType != 'awair-mint') {
-			var carbonDioxideService = new Service.CarbonDioxideSensor();
 			carbonDioxideService
 				.setCharacteristic(Characteristic.CarbonDioxideLevel, "--");
 		}
