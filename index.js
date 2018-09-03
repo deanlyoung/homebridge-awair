@@ -81,7 +81,7 @@ Awair.prototype = {
 							var co2 = sensors[sensor].value;
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, sensors[sensor].value);
-							if ((this.carbonDioxideThreshold > 0) && (co2 >= this.carbonDioxideThreshold) {
+							if ((this.carbonDioxideThreshold > 0) && (co2 >= this.carbonDioxideThreshold)) {
 								that.carbonDioxideService
 									.setCharacteristic(Characteristic.CarbonDioxideDetected);
 							}
