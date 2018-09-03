@@ -110,7 +110,7 @@ Add the following information to your config file (note: shown with (5) example 
 `carbonDioxideThreshold`	=> (OPTIONAL, default = `0` [i.e. OFF], the level at which HomeKit will trigger an alert for the CO2 in ppm)
 `endpoint`					=> The `air-data` endpoint to use (OPTIONAL, default = `15-min-avg`, `5-min-avg`, `raw` (10 second), or `latest`)
 `polling`					=> The frequency (OPTIONAL, default = `900` (15 minutes), units: seconds, that you would like to update the data in HomeKit)
-`url`						=> The Awair url to poll (OPTIONAL, default = `http://developer-apis.awair.is/v1/users/self/devices/:device_type/:device_id/air-data/:endpoint?limit=1&desc=true`, editing not recommended)
+`url`						=> The Awair url to poll (OPTIONAL, default = `http://developer-apis.awair.is/v1/users/self/devices/:device_type/:device_id/air-data/:endpoint?limit=1&desc=true`, EDITING NOT RECOMMENDED)
 
 # API Response
 

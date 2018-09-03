@@ -13,51 +13,62 @@
 			"accessory": "Awair",
 			"name": "Example Room 1 Awair",
 			"token": "AAA.AAA.AAA",
-			"devId": "123",
+			"manufacturer": "Awair",
 			"devType": "awair",
-			"serial": "example-serial-123",
+			"devId": "123",
+			"serial": "example-serial_123",
 			"model": "Awair",
-			"carbonDioxideThreshold": "1200",
-			"polling": "15"
+			"carbonDioxideThreshold": 1200,
+			"endpoint": "15-min-avg",
+			"polling": 900
 		},{
 			"accessory": "Awair",
 			"name": "Example Room 2 Awair Glow",
 			"token": "AAA.AAA.AAA",
-			"devId": "124",
+			"manufacturer": "Awair",
 			"devType": "awair-glow",
-			"serial": "example-serial-124",
+			"devId": "124",
+			"serial": "example-serial_124",
 			"model": "Awair Glow",
-			"carbonDioxideThreshold": "1200",
-			"polling": "15"
+			"carbonDioxideThreshold": 1200,
+			"endpoint": "15-min-avg",
+			"polling": 900
 		},{
 			"accessory": "Awair",
 			"name": "Example Room 3 Awair Mint",
 			"token": "AAA.AAA.AAA",
-			"devId": "125",
+			"manufacturer": "Awair",
 			"devType": "awair-mint",
-			"serial": "example-serial-125",
+			"devId": "125",
+			"serial": "example-serial_125",
 			"model": "Awair Mint",
-			"polling": "15"
+			"carbonDioxideThreshold": 0,
+			"endpoint": "15-min-avg",
+			"polling": 900
 		},{
 			"accessory": "Awair",
 			"name": "Example Room 4 Awair Omni",
 			"token": "AAA.AAA.AAA",
-			"devId": "126",
+			"manufacturer": "Awair",
 			"devType": "awair-omni",
-			"serial": "example-serial-126",
+			"devId": "126",
+			"serial": "example-serial_126",
 			"model": "Awair Omni",
-			"carbonDioxideThreshold": "1200",
-			"polling": "15"
+			"carbonDioxideThreshold": 1200,
+			"endpoint": "15-min-avg",
+			"polling": 900
 		},{
 			"accessory": "Awair",
 			"name": "Example Room 5 Awair 2nd Edition",
 			"token": "AAA.AAA.AAA",
-			"devId": "127",
+			"manufacturer": "Awair",
 			"devType": "awair-r2",
-			"serial": "example-serial-127",
+			"devId": "127",
+			"serial": "example-serial_127",
 			"model": "Awair 2nd Edition",
-			"carbonDioxideThreshold": "1200",
-			"polling": "15"
+			"carbonDioxideThreshold": 1200,
+			"endpoint": "15-min-avg",
+			"polling": 900
 		}
 	]
 }

@@ -188,12 +188,22 @@ Awair.prototype = {
 		// Get tnitial state
 		this.getData().bind(this);
 		
-		return [
-			informationService,
-			airQualityService,
-			temperatureService,
-			humidityService,
-			carbonDioxideService
-		];
+		if (this.devType != 'awair-mint') {
+			return [
+				informationService,
+				airQualityService,
+				temperatureService,
+				humidityService,
+				carbonDioxideService
+			];
+		} else {
+			return [
+				informationService,
+				airQualityService,
+				temperatureService,
+				humidityService
+			];
+		}
+		
 	}
 };
