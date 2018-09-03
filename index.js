@@ -44,9 +44,9 @@ Awair.prototype = {
 				that.airQualityService
 					.setCharacteristic(Characteristic.AirQuality, that.convertScore(data.score));
 				that.airQualityService.isPrimaryService = true;
-				if (this.devType != 'awair-mint') {
+				if (that.devType != 'awair-mint') {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
-				} else if (this.devType == 'awair-mint') {
+				} else if (that.devType == 'awair-mint') {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService];
 				}
 				
@@ -81,7 +81,7 @@ Awair.prototype = {
 							var co2 = sensors[sensor].value;
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, sensors[sensor].value);
-							if ((this.carbonDioxideThreshold > 0) && (co2 >= this.carbonDioxideThreshold)) {
+							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
 								that.carbonDioxideService
 									.setCharacteristic(Characteristic.CarbonDioxideDetected);
 							}
@@ -139,29 +139,31 @@ Awair.prototype = {
 	},
 	
 	getServices: function() {
+		var that = this;
+		
 		var sensorList = [];
 		
 		var informationService = new Service.AccessoryInformation();
 		var airQualityService = new Service.AirQualitySensor();
 		var temperatureService = new Service.TemperatureSensor();
 		var humidityService = new Service.HumiditySensor();
-		if (this.devType != 'awair-mint') {
+		if (that.devType != 'awair-mint') {
 			var carbonDioxideService = new Service.CarbonDioxideSensor();
 		}
 		
 		informationService
-			.setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
-			.setCharacteristic(Characteristic.Model, this.devType)
-			.setCharacteristic(Characteristic.SerialNumber, this.serial)
+			.setCharacteristic(Characteristic.Manufacturer, that.manufacturer)
+			.setCharacteristic(Characteristic.Model, that.devType)
+			.setCharacteristic(Characteristic.SerialNumber, that.serial)
 			.setCharacteristic(Characteristic.FirmwareRevision, packageJSON.version);
 		
 		airQualityService
 			.setCharacteristic(Characteristic.AirQuality, "--")
 			.setCharacteristic(Characteristic.VOCDensity, "--");
-			if (this.devType != 'awair-glow') {
+			if (that.devType != 'awair-glow') {
 				airQualityService
 					.setCharacteristic(Characteristic.PM10Density, "--");
-				if (this.devType != 'awair') {
+				if (that.devType != 'awair') {
 					airQualityService
 						.setCharacteristic(Characteristic.PM2_5Density, "--");
 				}
@@ -174,36 +176,34 @@ Awair.prototype = {
 		humidityService
 			.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--");
 		
-		if (this.devType != 'awair-mint') {
+		if (that.devType != 'awair-mint') {
 			carbonDioxideService
 				.setCharacteristic(Characteristic.CarbonDioxideLevel, "--");
 		}
 		
-		this.informationService = informationService;
-		this.airQualityService = airQualityService;
-		this.temperatureService = temperatureService;
-		this.humidityService = humidityService;
-		if (this.devType != 'awair-mint') {
-			this.carbonDioxideService = carbonDioxideService;
-		}
+		that.informationService = informationService;
 		sensorList.push(informationService);
+		that.airQualityService = airQualityService;
 		sensorList.push(airQualityService);
+		that.temperatureService = temperatureService;
 		sensorList.push(temperatureService);
+		that.humidityService = humidityService;
 		sensorList.push(airQualityService);
-		if (this.devType != 'awair-mint') {
+		if (that.devType != 'awair-mint') {
+			that.carbonDioxideService = carbonDioxideService;
 			sensorList.push(carbonDioxideService);
 		}
-		this.log(sensorList);
+		that.log(sensorList);
 		
-		if (this.polling_interval > 0) {
-			this.timer = setInterval(
-				this.getData.bind(this),
-				this.polling_interval * 1000
+		if (that.polling_interval > 0) {
+			that.timer = setInterval(
+				that.getData.bind(that),
+				that.polling_interval * 1000
 			);
 		}
 		
 		// Get tnitial state
-		this.getData().bind(this);
+		that.getData().bind(that);
 		
 		return sensorList;
 	}
