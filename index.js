@@ -13,12 +13,12 @@ function Awair(log, config) {
 	this.log = log;
 	this.token = config["token"];
 	this.manufacturer = config["manufacturer"] || "Awair";
-	this.deviceType = config["deviceType"];
-	this.deviceId = config["deviceId"];
+	this.devType = config["devType"];
+	this.devId = config["devId"];
 	this.serial = config['serial'] || this.devType + "-" + this.devId;
 	this.carbonDioxideThreshold = config['carbonDioxideThreshold'] || 1000;
 	this.polling_interval = Number(config["polling_interval"] || 1800); // Seconds, 15 mins
-	this.url = config["url"] || "http://developer-apis.awair.is/v1/users/self/devices/" + this.deviceType + "/" + this.deviceId + "/air-data/15-min-avg?desc=true&limit=1";
+	this.url = config["url"] || "http://developer-apis.awair.is/v1/users/self/devices/" + this.devType + "/" + this.devId + "/air-data/latest";
 }
 
 Awair.prototype = {
@@ -140,7 +140,7 @@ Awair.prototype = {
 	
 		informationService
 			.setCharacteristic(Characteristic.Manufacturer, this.manufacturer)
-			.setCharacteristic(Characteristic.Model, this.deviceType)
+			.setCharacteristic(Characteristic.Model, this.devType)
 			.setCharacteristic(Characteristic.SerialNumber, this.serial)
 			.setCharacteristic(Characteristic.FirmwareRevision, packageJSON.version);
 		
