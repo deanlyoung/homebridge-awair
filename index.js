@@ -107,7 +107,7 @@ Awair.prototype = {
 			})
 				.catch(function(err) {
 					that.log("Error contacting Awair API: " + err);
-					that.log(url);
+					that.log(options);
 				});
 	},
 	
