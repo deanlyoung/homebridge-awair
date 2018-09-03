@@ -46,12 +46,13 @@ Awair.prototype = {
 				that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
 				
 				var sensors = data.sensors;
+				var compSensors = {};
 				
-				var sense = sensors.reduce( (sensors, sensor) => {
+				var sense = sensors.reduce( (compSensors, sensor) => {
 					var comp = sensor.comp;
 					var val = sensor.value;
-					sensors[comp] = val;
-					return sensors;
+					compSensors[comp] = val;
+					return compSensors;
 				});
 				
 				that.log(sense);
