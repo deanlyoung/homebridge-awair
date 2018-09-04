@@ -79,12 +79,17 @@ Awair.prototype = {
 						case "co2":
 							// Carbon Dioxide (ppm)
 							var co2 = sensors[sensor].value;
+							var co2Detected;
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, sensors[sensor].value);
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
-								that.carbonDioxideService
-									.setCharacteristic(Characteristic.CarbonDioxideDetected);
+								co2Detected = 1;
+								that.log('CO2 DETECTED!' + co2 + ' > ' + that.carbonDioxideThreshold);
+							} else {
+								co2Detected = 0;
+								that.log('CO2:' + co2 + ' < ' + that.carbonDioxideThreshold);
 							}
+							that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
 							break;
 						case "voc":
 							var voc = sensors[sensor].value;
