@@ -49,7 +49,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair",
 		"carbonDioxideThreshold": 1200,
 		"endpoint": "15-min-avg",
-		"polling": 900
+		"polling_interval": 900
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 2 Awair Glow",
@@ -61,7 +61,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair Glow",
 		"carbonDioxideThreshold": 1200,
 		"endpoint": "15-min-avg",
-		"polling": 900
+		"polling_interval": 900
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 3 Awair Mint",
@@ -73,7 +73,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair Mint",
 		"carbonDioxideThreshold": 0,
 		"endpoint": "15-min-avg",
-		"polling": 900
+		"polling_interval": 900
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 4 Awair Omni",
@@ -85,7 +85,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair Omni",
 		"carbonDioxideThreshold": 1200,
 		"endpoint": "15-min-avg",
-		"polling": 900
+		"polling_interval": 900
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 5 Awair 2nd Edition",
@@ -97,7 +97,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair 2nd Edition",
 		"carbonDioxideThreshold": 1200,
 		"endpoint": "15-min-avg",
-		"polling": 900
+		"polling_interval": 900
 	}
 ]
 ```

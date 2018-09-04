@@ -20,7 +20,7 @@
 			"model": "Awair",
 			"carbonDioxideThreshold": 1200,
 			"endpoint": "15-min-avg",
-			"polling": 900
+			"polling_interval": 900
 		},{
 			"accessory": "Awair",
 			"name": "Example Room 2 Awair Glow",
@@ -32,7 +32,7 @@
 			"model": "Awair Glow",
 			"carbonDioxideThreshold": 1200,
 			"endpoint": "15-min-avg",
-			"polling": 900
+			"polling_interval": 900
 		},{
 			"accessory": "Awair",
 			"name": "Example Room 3 Awair Mint",
@@ -44,7 +44,7 @@
 			"model": "Awair Mint",
 			"carbonDioxideThreshold": 0,
 			"endpoint": "15-min-avg",
-			"polling": 900
+			"polling_interval": 900
 		},{
 			"accessory": "Awair",
 			"name": "Example Room 4 Awair Omni",
@@ -56,7 +56,7 @@
 			"model": "Awair Omni",
 			"carbonDioxideThreshold": 1200,
 			"endpoint": "15-min-avg",
-			"polling": 900
+			"polling_interval": 900
 		},{
 			"accessory": "Awair",
 			"name": "Example Room 5 Awair 2nd Edition",
@@ -68,7 +68,7 @@
 			"model": "Awair 2nd Edition",
 			"carbonDioxideThreshold": 1200,
 			"endpoint": "15-min-avg",
-			"polling": 900
+			"polling_interval": 900
 		}
 	]
 }
