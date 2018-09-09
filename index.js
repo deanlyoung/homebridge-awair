@@ -59,7 +59,7 @@ Awair.prototype = {
 					return compSensors;
 				}, {});
 				
-				that.log("[" + that.serial + "] sensors: " + JSON.stringify(sense));
+				that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sense));
 				
 				var temp = sense.temp;
 				var atmos = 1;
@@ -125,7 +125,7 @@ Awair.prototype = {
 				}
 			})
 			.catch(function(err) {
-				that.log("[" + that.serial + "] ERROR: " + err);
+				that.log("[" + that.serial + "] " + err);
 				that.temperatureService
 					.setCharacteristic(Characteristic.StatusFault, 1);
 				that.humidityService
