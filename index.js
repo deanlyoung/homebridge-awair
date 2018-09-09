@@ -185,30 +185,34 @@ Awair.prototype = {
 			.setCharacteristic(Characteristic.AirQuality, "--")
 			.setCharacteristic(Characteristic.VOCDensity, "--")
 			.setCharacteristic(Characteristic.PM10Density, "--")
-			.setCharacteristic(Characteristic.PM2_5Density, "--")
-			.setCharacteristic(Characteristic.StatusFault, "--");
+			.setCharacteristic(Characteristic.PM2_5Density, "--");
+		airQualityService
+			.addCharacteristic(Characteristic.StatusFault);
 		this.airQualityService = airQualityService;
 		services.push(airQualityService);
 		
 		var temperatureService = new Service.TemperatureSensor();
 		temperatureService
-			.setCharacteristic(Characteristic.CurrentTemperature, "--")
-			.setCharacteristic(Characteristic.StatusFault, "--");
+			.setCharacteristic(Characteristic.CurrentTemperature, "--");
+		temperatureService
+			.addCharacteristic(Characteristic.StatusFault);
 		this.temperatureService = temperatureService;
 		services.push(temperatureService);
 		
 		var humidityService = new Service.HumiditySensor();
 		humidityService
-			.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--")
-			.setCharacteristic(Characteristic.StatusFault, "--");
+			.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--");
+		humidityService
+			.addCharacteristic(Characteristic.StatusFault);
 		this.humidityService = humidityService;
 		services.push(humidityService);
 		
 		if (this.devType != "awair-mint") {
 			var carbonDioxideService = new Service.CarbonDioxideSensor();
 			carbonDioxideService
-				.setCharacteristic(Characteristic.CarbonDioxideLevel, "--")
-				.setCharacteristic(Characteristic.StatusFault, "--");
+				.setCharacteristic(Characteristic.CarbonDioxideLevel, "--");
+			carbonDioxideService
+				.setCharacteristic(Characteristic.StatusFault);
 			this.carbonDioxideService = carbonDioxideService;
 			services.push(carbonDioxideService);
 		}
