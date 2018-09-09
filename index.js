@@ -186,24 +186,18 @@ Awair.prototype = {
 			.setCharacteristic(Characteristic.VOCDensity, "--")
 			.setCharacteristic(Characteristic.PM10Density, "--")
 			.setCharacteristic(Characteristic.PM2_5Density, "--");
-		airQualityService
-			.addCharacteristic(Characteristic.StatusFault);
 		this.airQualityService = airQualityService;
 		services.push(airQualityService);
 		
 		var temperatureService = new Service.TemperatureSensor();
 		temperatureService
 			.setCharacteristic(Characteristic.CurrentTemperature, "--");
-		temperatureService
-			.addCharacteristic(Characteristic.StatusFault);
 		this.temperatureService = temperatureService;
 		services.push(temperatureService);
 		
 		var humidityService = new Service.HumiditySensor();
 		humidityService
 			.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--");
-		humidityService
-			.addCharacteristic(Characteristic.StatusFault);
 		this.humidityService = humidityService;
 		services.push(humidityService);
 		
@@ -211,8 +205,6 @@ Awair.prototype = {
 			var carbonDioxideService = new Service.CarbonDioxideSensor();
 			carbonDioxideService
 				.setCharacteristic(Characteristic.CarbonDioxideLevel, "--");
-			carbonDioxideService
-				.addCharacteristic(Characteristic.StatusFault);
 			this.carbonDioxideService = carbonDioxideService;
 			services.push(carbonDioxideService);
 		}
