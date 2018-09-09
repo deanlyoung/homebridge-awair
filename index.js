@@ -127,14 +127,21 @@ Awair.prototype = {
 			.catch(function(err) {
 				that.log("[" + that.serial + "] " + err);
 				that.temperatureService
+					.setCharacteristic(Characteristic.CurrentTemperature, "--")
 					.setCharacteristic(Characteristic.StatusFault, 1);
 				that.humidityService
+					.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--")
 					.setCharacteristic(Characteristic.StatusFault, 1);
 				if (that.devType != "awair-mint") {
 					that.carbonDioxideService
+						.setCharacteristic(Characteristic.CarbonDioxideLevel, "--")
 						.setCharacteristic(Characteristic.StatusFault, 1);
 				};
 				that.airQualityService
+					.setCharacteristic(Characteristic.AirQuality, "--")
+					.setCharacteristic(Characteristic.VOCDensity, "--")
+					.setCharacteristic(Characteristic.PM10Density, "--")
+					.setCharacteristic(Characteristic.PM2_5Density, "--")
 					.setCharacteristic(Characteristic.StatusFault, 1);
 			});
 	},
