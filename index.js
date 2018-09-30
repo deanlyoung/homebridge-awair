@@ -16,10 +16,12 @@ function Awair(log, config) {
 	this.devType = config["devType"];
 	this.devId = config["devId"];
 	this.serial = config["serial"] || this.devType + "-" + this.devId;
-	this.carbonDioxideThreshold = config["carbonDioxideThreshold"] || 0; // ppm, 0 = OFF
+	this.carbonDioxideThreshold = Number(config["carbonDioxideThreshold"] || 0); // ppm, 0 = OFF
+	this.vocMW = Number(config["voc_mixture_mw"] || 72.66578273019740); // Molecular Weight (g/mol) of a reference VOC gas or mixture
 	this.polling_interval = Number(config["polling_interval"] || 900); // seconds (15 mins)
+	this.limit = Number(config["limit"] || 12); // consecutive 10 second
 	this.endpoint = config["endpoint"] || "15-min-avg"; // 15-min-avg, 5-min-avg, raw, latest
-	this.url = config["url"] || "http://developer-apis.awair.is/v1/users/self/devices/" + this.devType + "/" + this.devId + "/air-data/" + this.endpoint + "?limit=1&desc=true";
+	this.url = config["url"] || "http://developer-apis.awair.is/v1/users/self/devices/" + this.devType + "/" + this.devId + "/air-data/" + this.endpoint + "?limit=" + this.limit + "&desc=true";
 }
 
 Awair.prototype = {
@@ -39,30 +41,41 @@ Awair.prototype = {
 		
 		return request(options)
 			.then(function(response) {
-				var data = response.data[0];
-				
 				that.airQualityService
 					.setCharacteristic(Characteristic.AirQuality, that.convertScore(data.score));
 				that.airQualityService.isPrimaryService = true;
-				if (that.devType != "awair-mint") {
-					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
-				} else if (that.devType == "awair-mint") {
+				if (that.devType == "awair-mint") {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService];
+				} else {
+					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
 				}
 				
-				var sensors = data.sensors;
-				
-				var sense = sensors.reduce( (compSensors, sensor) => {
-					var comp = sensor.comp;
-					var val = sensor.value;
-					compSensors[comp] = val;
-					return compSensors;
-				}, {});
-				
-				that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sense));
+				var data = response.data;
+				var sensors, sense, comp, val;
+				for (dat in data) {
+					var sensies = dat.sensors;
+					sense = sensies.reduce( (compSensors, sensor) => {
+						comp = sensor.comp;
+						val += sensor.value;
+						compSensors[comp] = val / data.length;
+						return compSensors;
+					}, {});
+				}
 				
 				var temp = sense.temp;
 				var atmos = 1;
+				
+				that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sense));
+				
+				if (that.endpoint == "raw") {
+					sensors = Object.keys(sense).forEach(function(key, index) {
+						sensors = sense.reduce( (senseWise, sensor) => {
+							return {"comp": key, "value": sense['key']};
+						}, [])
+					});
+				} else {
+					sensors = response.data[0].sensors;
+				}
 				
 				for (sensor in sensors) {
 					switch (sensors[sensor].comp) {
@@ -147,11 +160,14 @@ Awair.prototype = {
 	},
 	
 	convertChemicals: function(voc, atmos, temp) {
+		var that = this;
+		
+		var mw = parseFloat(that.vocMW);
 		var voc = parseFloat(voc);
 		var atmos = parseFloat(atmos);
 		var temp = parseFloat(temp);
-		var vocString = "(" + voc + " * 72.66578273019740 * " + atmos + " * 101.32) / ((273.15 + " + temp + ") * 8.3144)";
-		var tvoc = (voc * 72.66578273019740 * atmos * 101.32) / ((273.15 + temp) * 8.3144);
+		var vocString = "(" + voc + " * mw * " + atmos + " * 101.32) / ((273.15 + " + temp + ") * 8.3144)";
+		var tvoc = (voc * mw * atmos * 101.32) / ((273.15 + temp) * 8.3144);
 		this.log("[" + this.serial + "] ppb => ug/m^3 equation: " + vocString);
 		return tvoc;
 	},
@@ -194,7 +210,11 @@ Awair.prototype = {
 			.setCharacteristic(Characteristic.PM10Density, "--")
 			.setCharacteristic(Characteristic.PM2_5Density, "--");
 		airQualityService
-			.addCharacteristic(Characteristic.StatusFault);
+			.addCharacteristic(Characteristic.StatusFault)
+			.setProps({
+				minValue: 0,
+				maxValue: 100000
+			});
 		this.airQualityService = airQualityService;
 		services.push(airQualityService);
 		
@@ -202,7 +222,11 @@ Awair.prototype = {
 		temperatureService
 			.setCharacteristic(Characteristic.CurrentTemperature, "--");
 		temperatureService
-			.addCharacteristic(Characteristic.StatusFault);
+			.addCharacteristic(Characteristic.StatusFault)
+			.setProps({
+				minValue: -100,
+				maxValue: 100
+			});
 		this.temperatureService = temperatureService;
 		services.push(temperatureService);
 		

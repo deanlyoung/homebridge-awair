@@ -48,8 +48,10 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_123",
 		"model": "Awair",
 		"carbonDioxideThreshold": 1200,
+		"voc_mixture_mw": 72.66578273019740,
 		"endpoint": "15-min-avg",
-		"polling_interval": 900
+		"polling_interval": 900,
+		"limit": 12
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 2 Awair Glow",
@@ -60,8 +62,10 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_124",
 		"model": "Awair Glow",
 		"carbonDioxideThreshold": 1200,
+		"voc_mixture_mw": 72.66578273019740,
 		"endpoint": "15-min-avg",
-		"polling_interval": 900
+		"polling_interval": 900,
+		"limit": 12
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 3 Awair Mint",
@@ -72,8 +76,10 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_125",
 		"model": "Awair Mint",
 		"carbonDioxideThreshold": 0,
+		"voc_mixture_mw": 72.66578273019740,
 		"endpoint": "15-min-avg",
-		"polling_interval": 900
+		"polling_interval": 900,
+		"limit": 12
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 4 Awair Omni",
@@ -84,8 +90,10 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_126",
 		"model": "Awair Omni",
 		"carbonDioxideThreshold": 1200,
+		"voc_mixture_mw": 72.66578273019740,
 		"endpoint": "15-min-avg",
-		"polling_interval": 900
+		"polling_interval": 900,
+		"limit": 12
 	},{
 		"accessory": "Awair",
 		"name": "Example Room 5 Awair 2nd Edition",
@@ -96,8 +104,10 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_127",
 		"model": "Awair 2nd Edition",
 		"carbonDioxideThreshold": 1200,
+		"voc_mixture_mw": 72.66578273019740,
 		"endpoint": "15-min-avg",
-		"polling_interval": 900
+		"polling_interval": 900,
+		"limit": 12
 	}
 ]
 ```
@@ -113,9 +123,11 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		`serial`	=> Serial Number (OPTIONAL, default = `devType_devId`, options: `mac-address` or `devType_devId`)
 		 `model`	=> Device Model (OPTIONAL, default = `devType`, options: `Awair`, `Awair Glow`, `Awair Mint`, `Awair Omni`, `Awair 2nd Edition`)
 `carbonDioxideThreshold`	=> (OPTIONAL, default = `0` [i.e. OFF], the level at which HomeKit will trigger an alert for the CO2 in ppm)
-	      `endpoint`	=> The `air-data` endpoint to use (OPTIONAL, default = `15-min-avg`, `5-min-avg`, `raw` (10 second), or `latest`)
+	`voc_mixture_mw`	=> The Molecular Weight (g/mol) of a reference gas or mixture that you use to convert from ppb to ug/m^3 (OPTIONAL, default = `72.66578273019740`)
+	      `endpoint`	=> The `/air-data` endpoint to use (OPTIONAL, default = `15-min-avg`, options: `15-min-avg`, `5-min-avg`, `raw`, or `latest`)
 	       `polling`	=> The frequency (OPTIONAL, default = `900` (15 minutes), units: seconds, that you would like to update the data in HomeKit)
-		   `url`	=> The Awair url to poll (OPTIONAL, default = `http://developer-apis.awair.is/v1/users/self/devices/:device_type/:device_id/air-data/:endpoint?limit=1&desc=true`, EDITING NOT RECOMMENDED)
+		   `limit`	=> Number of consecutive 10 second data points returned per request, used for custom averaging of sensor values from `/raw` endpoint (OPTIONAL, default = `12` i.e. 2 minute average)
+		   `url`	=> The Awair url to poll (OPTIONAL, default = `http://developer-apis.awair.is/v1/users/self/devices/:device_type/:device_id/air-data/:endpoint?limit=:limit&desc=true`, EDITING NOT RECOMMENDED)
 ```
 
 # API Response
