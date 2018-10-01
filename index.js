@@ -41,17 +41,8 @@ Awair.prototype = {
 		
 		return request(options)
 			.then(function(response) {
-				that.airQualityService
-					.setCharacteristic(Characteristic.AirQuality, that.convertScore(data.score));
-				that.airQualityService.isPrimaryService = true;
-				if (that.devType == "awair-mint") {
-					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService];
-				} else {
-					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
-				}
-				
 				var data = response.data;
-				var sensors, sense, comp, val;
+				var score, sensors, sense, comp, val;
 				for (dat in data) {
 					var sensies = dat.sensors;
 					sense = sensies.reduce( (compSensors, sensor) => {
@@ -60,6 +51,17 @@ Awair.prototype = {
 						compSensors[comp] = val / data.length;
 						return compSensors;
 					}, {});
+					score += dat.score;
+					score /= data.length;
+				}
+				
+				that.airQualityService
+					.setCharacteristic(Characteristic.AirQuality, that.convertScore(score));
+				that.airQualityService.isPrimaryService = true;
+				if (that.devType == "awair-mint") {
+					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService];
+				} else {
+					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
 				}
 				
 				var temp = sense.temp;
