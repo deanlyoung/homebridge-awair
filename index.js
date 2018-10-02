@@ -55,8 +55,8 @@ Awair.prototype = {
 				for (var d in data) {
 					var comp, val;
 					var sensorWise = d.sensors;
-					that.log(sensorWise);
-					var sensors = sensorWise.reduce(function (compSensors, sensor) => {
+					that.log(JSON.stringify(sensorWise));
+					var sensors = sensorWise.reduce( (compSensors, sensor) => {
 						comp = sensor.comp;
 						val += parseFloat(sensor.value);
 						compSensors[comp] = val / data.length;
