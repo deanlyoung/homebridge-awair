@@ -42,12 +42,31 @@ Awair.prototype = {
 		return request(options)
 			.then(function(response) {
 				that.airQualityService
+<<<<<<< HEAD
 					.setCharacteristic(Characteristic.AirQuality, that.convertScore(score));
+=======
+					.setCharacteristic(Characteristic.AirQuality, that.convertScore(data.score));
+>>>>>>> parent of 0359641... score averaging
 				that.airQualityService.isPrimaryService = true;
 				if (that.devType == "awair-mint") {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService];
 				} else {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
+<<<<<<< HEAD
+=======
+				}
+				
+				var data = response.data;
+				var sensors, sense, comp, val;
+				for (dat in data) {
+					var sensies = dat.sensors;
+					sense = sensies.reduce( (compSensors, sensor) => {
+						comp = sensor.comp;
+						val += sensor.value;
+						compSensors[comp] = val / data.length;
+						return compSensors;
+					}, {});
+>>>>>>> parent of 0359641... score averaging
 				}
 				
 				var data = response.data;
