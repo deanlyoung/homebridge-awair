@@ -56,8 +56,7 @@ Awair.prototype = {
 				var val;
 				var data = response.data;
 				for (d in data) {
-					sensors = d.sensors;
-					sensors = sensors.reduce( (compSensors, sensor) => {
+					sensors = d.sensors.reduce( (compSensors, sensor) => {
 						comp = sensor.comp;
 						val += parseFloat(sensor.value);
 						compSensors[comp] = val / data.length;
