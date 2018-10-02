@@ -52,25 +52,13 @@ Awair.prototype = {
 				}
 				
 				var data = response.data;
-				var sensors, sense, comp, val;
-				for (dat in data) {
-					var sensies = dat.sensors;
-					sense = sensies.reduce( (compSensors, sensor) => {
-						comp = sensor.comp;
-						val += sensor.value;
-						compSensors[comp] = val / data.length;
-						return compSensors;
-					}, {});
-				}
 				
-				var data = response.data;
-				that.log(JSON.stringify(data);
+				var sensors = data
+					.map(sensor => sensor.sensors)
+					.reduce((a, b) => a.concat(b))
+					.reduce((a, b) => {a[b.comp] = a[b.comp] ? 0.5*(a[b.comp] + b.value) : b.value ; return a}, {});
 				
-				var score = data.reduce(function (sum, s) {
-					return sum + parseFloat(s.score);
-				}, 0) / data.length;
-				
-				that.log(JSON.stringify(score);
+				var score = data.reduce((sum, s) => sum + parseFloat(s.score)) / data.length;
 				
 				var temp = sensors.temp;
 				var atmos = 1;
