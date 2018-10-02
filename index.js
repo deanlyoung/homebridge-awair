@@ -50,7 +50,10 @@ Awair.prototype = {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
 				}
 				
-				var score, sensors, comp, val;
+				var score;
+				var sensors;
+				var comp;
+				var val;
 				var data = response.data;
 				for (d in data) {
 					sensors = d.sensors;
