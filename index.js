@@ -38,6 +38,7 @@ Awair.prototype = {
 		this.log("[" + this.serial + "] url: " + this.url);
 		
 		var that = this;
+		var score;
 		
 		return request(options)
 			.then(function(response) {
@@ -50,13 +51,12 @@ Awair.prototype = {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
 				}
 				
-				var score;
-				var sensors;
-				var comp;
-				var val;
 				var data = response.data;
 				for (var d in data) {
-					sensors = d.sensors.reduce( (compSensors, sensor) => {
+					var comp, val;
+					var sensorWise = d.sensors;
+					that.log(sensorWise);
+					var sensors = sensorWise.reduce(function (compSensors, sensor) => {
 						comp = sensor.comp;
 						val += parseFloat(sensor.value);
 						compSensors[comp] = val / data.length;
