@@ -51,7 +51,7 @@ Awair.prototype = {
 						compSensors[comp] = val / data.length;
 						return compSensors;
 					}, {});
-					score += dat.score;
+					score += parseFloat(dat.score);
 					score /= data.length;
 				}
 				
