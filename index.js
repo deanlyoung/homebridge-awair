@@ -38,7 +38,6 @@ Awair.prototype = {
 		this.log("[" + this.serial + "] url: " + this.url);
 		
 		var that = this;
-		var score;
 		
 		return request(options)
 			.then(function(response) {
@@ -52,21 +51,20 @@ Awair.prototype = {
 				}
 				
 				var data = response.data;
-				that.log(JSON.stringify(data));
-				data.forEach(function (d) {
-					var comp, val;
-					that.log(JSON.stringify(d));
-					var sensorWise = d.sensors;
-					var sensors = sensorWise.reduce( (compSensors, sensor) => {
-						comp = sensor.comp;
-						val += parseFloat(sensor.value);
-						compSensors[comp] = val / data.length;
-						return compSensors;
-					}, {});
-					
-					score += parseFloat(d.score);
-					score /= data.length;
-				}
+				
+				var sensors = Array.from(data.reduce(
+					(sensorComponents, sensor) => Object.keys(sensor).reduce(
+						(sensorComponents, comp) => typeof sensor[comp] == "number" ? sensorComponents.set(comp, (sensorComponents.get(comp) || []).concat(sensor[comp])) : sensorComponents, sensorComponents),
+					new Map()), ([name, values]) => ({ name, average: values.reduce( (a,b) => a + b ) / values.length })
+				);
+				
+				that.log(JSON.stringify(sensors);
+				
+				var score = data.reduce(function (sum, s) {
+					return sum + parseFloat(s.score);
+				}, 0) / data.length;
+				
+				that.log(JSON.stringify(score);
 				
 				var temp = sensors.temp;
 				var atmos = 1;
