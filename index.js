@@ -52,10 +52,11 @@ Awair.prototype = {
 				}
 				
 				var data = response.data;
+				that.log(JSON.stringify(data));
 				data.forEach(function (d) {
 					var comp, val;
+					that.log(JSON.stringify(d));
 					var sensorWise = d.sensors;
-					that.log(JSON.stringify(sensorWise));
 					var sensors = sensorWise.reduce( (compSensors, sensor) => {
 						comp = sensor.comp;
 						val += parseFloat(sensor.value);
