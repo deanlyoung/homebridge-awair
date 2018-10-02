@@ -51,14 +51,7 @@ Awair.prototype = {
 				}
 				
 				var data = response.data;
-				
-				//var sensors = Array.from(data.reduce(
-				//	(sensorComponents, sensor) => Object.keys(sensor).reduce(
-				//		(sensorComponents, comp) => typeof sensor[comp] == "number" ? sensorComponents.set(comp, (sensorComponents.get(comp) || []).concat(sensor[comp])) : sensorComponents, sensorComponents),
-				//	new Map()), ([name, values]) => ({ name, average: values.reduce( (a,b) => a + b ) / values.length })
-				//);
-				
-				//that.log(JSON.stringify(sensors);
+				that.log(JSON.stringify(data);
 				
 				var score = data.reduce(function (sum, s) {
 					return sum + parseFloat(s.score);
