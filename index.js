@@ -41,9 +41,17 @@ Awair.prototype = {
 		
 		return request(options)
 			.then(function(response) {
+				var data = response.data;
+				
+				var sensors = data
+					.map(sensor => sensor.sensors)
+					.reduce((a, b) => a.concat(b))
+					.reduce((a, b) => {a[b.comp] = a[b.comp] ? 0.5*(a[b.comp] + b.value) : b.value; return a}, {});
+				
+				var score = data.reduce((a, b) => {return a + b.score}, 0) / data.length;
+				
 				that.airQualityService
 					.setCharacteristic(Characteristic.AirQuality, that.convertScore(score));
-					.setCharacteristic(Characteristic.AirQuality, that.convertScore(data.score));
 				that.airQualityService.isPrimaryService = true;
 				if (that.devType == "awair-mint") {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService];
@@ -51,32 +59,23 @@ Awair.prototype = {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService];
 				}
 				
-				var data = response.data;
-				
-				var sensors = data
-					.map(sensor => sensor.sensors)
-					.reduce((a, b) => a.concat(b))
-					.reduce((a, b) => {a[b.comp] = a[b.comp] ? 0.5*(a[b.comp] + b.value) : b.value ; return a}, {});
-				
-				var score = data.reduce((sum, s) => sum + parseFloat(s.score)) / data.length;
-				
-				var temp = sensors.temp;
+				var temp = parseFloat(sensors.temp);
 				var atmos = 1;
 				
-				that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sensors));
+				that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sensors) + ", score - " + score);
 				
 				for (var sensor in sensors) {
 					switch (sensor) {
 						case "temp":
 							// Temperature (C)
 							that.temperatureService
-								.setCharacteristic(Characteristic.CurrentTemperature, sensors[sensor])
+								.setCharacteristic(Characteristic.CurrentTemperature, parseFloat(sensors[sensor]))
 								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "humid":
 							// Humidity (%)
 							that.humidityService
-								.setCharacteristic(Characteristic.CurrentRelativeHumidity, sensors[sensor])
+								.setCharacteristic(Characteristic.CurrentRelativeHumidity, parseFloat(sensors[sensor]))
 								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "co2":
@@ -84,7 +83,7 @@ Awair.prototype = {
 							var co2 = sensors[sensor];
 							var co2Detected;
 							that.carbonDioxideService
-								.setCharacteristic(Characteristic.CarbonDioxideLevel, sensors[sensor])
+								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
 								.setCharacteristic(Characteristic.StatusFault, 0);
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
 								co2Detected = 1;
@@ -96,7 +95,7 @@ Awair.prototype = {
 							that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
 							break;
 						case "voc":
-							var voc = sensors[sensor];
+							var voc = parseFloat(sensors[sensor]);
 							tvoc = that.convertChemicals(voc, atmos, temp);
 							that.log("[" + that.serial + "]: voc (" + voc + " ppb) => tvoc (" + tvoc + " ug/m^3)");
 							// Chemicals (ug/m^3)
@@ -107,20 +106,20 @@ Awair.prototype = {
 						case "dust":
 							// Dust (ug/m^3)
 							that.airQualityService
-								.setCharacteristic(Characteristic.PM10Density, sensors[sensor]);
+								.setCharacteristic(Characteristic.PM10Density, parseFloat(sensors[sensor]));
 							break;
 						case "pm25":
 							// PM2.5 (ug/m^3)
 							that.airQualityService
-								.setCharacteristic(Characteristic.PM2_5Density, sensors[sensor]);
+								.setCharacteristic(Characteristic.PM2_5Density, parseFloat(sensors[sensor]));
 							break;
 						case "pm10":
 							// PM10 (ug/m^3)
 							that.airQualityService
-								.setCharacteristic(Characteristic.PM10Density, sensors[sensor]);
+								.setCharacteristic(Characteristic.PM10Density, parseFloat(sensors[sensor]));
 							break;
 						default:
-							that.log("[" + that.serial + "] ignoring " + sensors[sensor].comp);
+							that.log("[" + that.serial + "] ignoring " + JSON.stringify(sensor) + ": " + parseFloat(sensors[sensor]));
 							break;
 					}
 				}
