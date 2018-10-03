@@ -197,7 +197,9 @@ Awair.prototype = {
 			.setCharacteristic(Characteristic.PM10Density, "--")
 			.setCharacteristic(Characteristic.PM2_5Density, "--");
 		airQualityService
-			.addCharacteristic(Characteristic.StatusFault)
+			.addCharacteristic(Characteristic.StatusFault);
+		airQualityService
+			.getCharacteristic(Characteristic.VOCDensity)
 			.setProps({
 				minValue: 0,
 				maxValue: 100000
@@ -209,7 +211,9 @@ Awair.prototype = {
 		temperatureService
 			.setCharacteristic(Characteristic.CurrentTemperature, "--");
 		temperatureService
-			.addCharacteristic(Characteristic.StatusFault)
+			.addCharacteristic(Characteristic.StatusFault);
+		temperatureService
+			.getCharacteristic(Characteristic.CurrentTemperature)
 			.setProps({
 				minValue: -100,
 				maxValue: 100
