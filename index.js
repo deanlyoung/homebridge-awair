@@ -15,7 +15,7 @@ function Awair(log, config) {
 	this.manufacturer = config["manufacturer"] || "Awair";
 	this.devType = config["devType"];
 	this.devId = config["devId"];
-	this.serial = config["serial"] || this.devType + "-" + this.devId;
+	this.serial = config["serial"] || this.devType + "_" + this.devId;
 	this.carbonDioxideThreshold = Number(config["carbonDioxideThreshold"] || 0); // ppm, 0 = OFF
 	this.vocMW = Number(config["voc_mixture_mw"] || 72.66578273019740); // Molecular Weight (g/mol) of a reference VOC gas or mixture
 	this.polling_interval = Number(config["polling_interval"] || 900); // seconds (15 mins)
@@ -62,7 +62,7 @@ Awair.prototype = {
 				var temp = parseFloat(sensors.temp);
 				var atmos = 1;
 				
-				that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sensors) + ", score - " + score);
+				that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sensors) + ", score: " + score);
 				
 				for (var sensor in sensors) {
 					switch (sensor) {
@@ -153,7 +153,7 @@ Awair.prototype = {
 		var voc = parseFloat(voc);
 		var atmos = parseFloat(atmos);
 		var temp = parseFloat(temp);
-		var vocString = "(" + voc + " * mw * " + atmos + " * 101.32) / ((273.15 + " + temp + ") * 8.3144)";
+		var vocString = "(" + voc + " * " + mw + " * " + atmos + " * 101.32) / ((273.15 + " + temp + ") * 8.3144)";
 		var tvoc = (voc * mw * atmos * 101.32) / ((273.15 + temp) * 8.3144);
 		this.log("[" + this.serial + "] ppb => ug/m^3 equation: " + vocString);
 		return tvoc;
@@ -161,9 +161,7 @@ Awair.prototype = {
 	
 	convertScore: function(score) {
 		var score = parseFloat(score);
-		if (!score) {
-			return 0; // Error
-		} else if (score >= 90) {
+		if (score >= 90) {
 			return 1; // EXCELLENT
 		} else if (score >= 80 && score < 90) {
 			return 2; // GOOD
