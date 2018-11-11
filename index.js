@@ -11,11 +11,12 @@ module.exports = function(homebridge) {
 
 function Awair(log, config) {
 	this.log = log;
+	this.logging = config["logging"] || false;
 	this.token = config["token"];
 	this.manufacturer = config["manufacturer"] || "Awair";
 	this.devType = config["devType"];
 	this.devId = config["devId"];
-	this.serial = config["serial"] || this.devType + "-" + this.devId;
+	this.serial = config["serial"] || this.devType + "_" + this.devId;
 	this.carbonDioxideThreshold = Number(config["carbonDioxideThreshold"] || 0); // ppm, 0 = OFF
 	this.vocMW = Number(config["voc_mixture_mw"] || 72.66578273019740); // Molecular Weight (g/mol) of a reference VOC gas or mixture
 	this.polling_interval = Number(config["polling_interval"] || 900); // seconds (15 mins)
@@ -35,7 +36,7 @@ Awair.prototype = {
 			}
 		};
 		
-		this.log("[" + this.serial + "] url: " + this.url);
+		if(this.logging){this.log("[" + this.serial + "] url: " + this.url)};
 		
 		var that = this;
 		
@@ -62,7 +63,7 @@ Awair.prototype = {
 				var temp = parseFloat(sensors.temp);
 				var atmos = 1;
 				
-				that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sensors) + ", score - " + score);
+				if(that.logging){that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sensors) + ", score:	" + score)};
 				
 				for (var sensor in sensors) {
 					switch (sensor) {
@@ -87,17 +88,17 @@ Awair.prototype = {
 								.setCharacteristic(Characteristic.StatusFault, 0);
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
 								co2Detected = 1;
-								that.log("[" + that.serial + "] CO2 HIGH: " + co2 + " > " + that.carbonDioxideThreshold);
+								if(that.logging){that.log("[" + that.serial + "] CO2 HIGH: " + co2 + " > " + that.carbonDioxideThreshold)};
 							} else {
 								co2Detected = 0;
-								that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThreshold);
+								if(that.logging){that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThreshold)};
 							}
 							that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
 							break;
 						case "voc":
 							var voc = parseFloat(sensors[sensor]);
 							tvoc = that.convertChemicals(voc, atmos, temp);
-							that.log("[" + that.serial + "]: voc (" + voc + " ppb) => tvoc (" + tvoc + " ug/m^3)");
+							if(that.logging){that.log("[" + that.serial + "]: voc (" + voc + " ppb) => tvoc (" + tvoc + " ug/m^3)")};
 							// Chemicals (ug/m^3)
 							that.airQualityService
 								.setCharacteristic(Characteristic.VOCDensity, tvoc)
@@ -119,13 +120,13 @@ Awair.prototype = {
 								.setCharacteristic(Characteristic.PM10Density, parseFloat(sensors[sensor]));
 							break;
 						default:
-							that.log("[" + that.serial + "] ignoring " + JSON.stringify(sensor) + ": " + parseFloat(sensors[sensor]));
+							if(that.logging){that.log("[" + that.serial + "] ignoring " + JSON.stringify(sensor) + ": " + parseFloat(sensors[sensor]))};
 							break;
 					}
 				}
 			})
 			.catch(function(err) {
-				that.log("[" + that.serial + "] " + err);
+				if(that.logging){that.log("[" + that.serial + "] " + err)};
 				that.temperatureService
 					.setCharacteristic(Characteristic.CurrentTemperature, "--")
 					.setCharacteristic(Characteristic.StatusFault, 1);
@@ -155,15 +156,13 @@ Awair.prototype = {
 		var temp = parseFloat(temp);
 		var vocString = "(" + voc + " * mw * " + atmos + " * 101.32) / ((273.15 + " + temp + ") * 8.3144)";
 		var tvoc = (voc * mw * atmos * 101.32) / ((273.15 + temp) * 8.3144);
-		this.log("[" + this.serial + "] ppb => ug/m^3 equation: " + vocString);
+		if(that.logging){that.log("[" + that.serial + "] ppb => ug/m^3 equation: " + vocString)};
 		return tvoc;
 	},
 	
 	convertScore: function(score) {
 		var score = parseFloat(score);
-		if (!score) {
-			return 0; // Error
-		} else if (score >= 90) {
+		if (score >= 90) {
 			return 1; // EXCELLENT
 		} else if (score >= 80 && score < 90) {
 			return 2; // GOOD
