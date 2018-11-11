@@ -154,7 +154,7 @@ Awair.prototype = {
 		var voc = parseFloat(voc);
 		var atmos = parseFloat(atmos);
 		var temp = parseFloat(temp);
-		var vocString = "(" + voc + " * mw * " + atmos + " * 101.32) / ((273.15 + " + temp + ") * 8.3144)";
+		var vocString = "(" + voc + " * " + mw + " * " + atmos + " * 101.32) / ((273.15 + " + temp + ") * 8.3144)";
 		var tvoc = (voc * mw * atmos * 101.32) / ((273.15 + temp) * 8.3144);
 		if(that.logging){that.log("[" + that.serial + "] ppb => ug/m^3 equation: " + vocString)};
 		return tvoc;
@@ -196,7 +196,9 @@ Awair.prototype = {
 			.setCharacteristic(Characteristic.PM10Density, "--")
 			.setCharacteristic(Characteristic.PM2_5Density, "--");
 		airQualityService
-			.addCharacteristic(Characteristic.StatusFault)
+			.addCharacteristic(Characteristic.StatusFault);
+		airQualityService
+			.getCharacteristic(Characteristic.VOCDensity)
 			.setProps({
 				minValue: 0,
 				maxValue: 100000
@@ -208,7 +210,9 @@ Awair.prototype = {
 		temperatureService
 			.setCharacteristic(Characteristic.CurrentTemperature, "--");
 		temperatureService
-			.addCharacteristic(Characteristic.StatusFault)
+			.addCharacteristic(Characteristic.StatusFault);
+		temperatureService
+			.getCharacteristic(Characteristic.CurrentTemperature)
 			.setProps({
 				minValue: -100,
 				maxValue: 100
