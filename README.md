@@ -128,6 +128,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 	       `polling`	=> The frequency (OPTIONAL, default = `900` (15 minutes), units: seconds, that you would like to update the data in HomeKit)
 		 `limit`	=> Number of consecutive 10 second data points returned per request, used for custom averaging of sensor values from `/raw` endpoint (OPTIONAL, default = `12` i.e. 2 minute average)
 		   `url`	=> The Awair url to poll (OPTIONAL, default = `http://developer-apis.awair.is/v1/users/self/devices/:device_type/:device_id/air-data/:endpoint?limit=:limit&desc=true`, EDITING NOT RECOMMENDED)
+		   `logging`	=> Whether to output logs to the Homebridge logs (OPTIONAL, default = `false`)
 ```
 
 # API Response
