@@ -185,13 +185,6 @@ Awair.prototype = {
 				}
 				break;
 			case "aqi":
-				var aqtemp,
-					pm25,
-					pm10,
-					voc,
-					aqi;
-				var aqatmos = 1;
-				
 				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/latest";
 				if(that.logging){that.log(aqurl)};
 				
@@ -206,6 +199,14 @@ Awair.prototype = {
 				
 				return request(aqoptions)
 					.then(function(response) {
+						var aqtemp,
+							pm25,
+							pm10,
+							voc,
+							aqi;
+						
+						var aqatmos = 1;
+						
 						var aqdata = response.data;
 						var aqsensors = aqdata
 							.map(aqsensor => aqsensor.sensors)
