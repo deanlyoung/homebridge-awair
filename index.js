@@ -266,6 +266,8 @@ Awair.prototype = {
 							}
 						}
 						
+						if(that.logging){that.log("pm25: " + pm25 + " pm10: " + pm10 + " voc: " + voc)};
+						
 						if (pm25 >= 0) {
 							aqi = pm25;
 						} else if (pm10 >= 0) {
