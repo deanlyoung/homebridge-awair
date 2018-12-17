@@ -265,36 +265,36 @@ Awair.prototype = {
 									break;
 							}
 						}
+						
+						if (pm25 >= 0) {
+							aqi = pm25;
+						} else if (pm10 >= 0) {
+							aqi = pm10;
+						} else if (voc >= 0) {
+							aqi = voc;
+						} else {
+							aqi = -1;
+						}
+						
+						if(that.logging){that.log("AQI: " + aqi)};
+						
+						if (aqi >= 0 && aqi <= 50) {
+							return 1; // EXCELLENT
+						} else if (aqi > 50 && aqi <= 100) {
+							return 2; // GOOD
+						} else if (aqi > 100 && aqi <= 150) {
+							return 3; // FAIR
+						} else if (aqi > 150 && aqi <= 200) {
+							return 4; // INFERIOR
+						} else if (aqi > 200) {
+							return 5; // POOR
+						} else {
+							return 0; // Error
+						}
 					})
 					.catch(function(err) {
 						if(that.logging){that.log("Error retrieving air quality data: " + err)};
 					});
-				
-				if (pm25 >= 0) {
-					aqi = pm25;
-				} else if (pm10 >= 0) {
-					aqi = pm10;
-				} else if (voc >= 0) {
-					aqi = voc;
-				} else {
-					aqi = -1;
-				}
-				
-				if(that.logging){that.log("AQI: " + aqi)};
-				
-				if (aqi >= 0 && aqi <= 50) {
-					return 1; // EXCELLENT
-				} else if (aqi > 50 && aqi <= 100) {
-					return 2; // GOOD
-				} else if (aqi > 100 && aqi <= 150) {
-					return 3; // FAIR
-				} else if (aqi > 150 && aqi <= 200) {
-					return 4; // INFERIOR
-				} else if (aqi > 200) {
-					return 5; // POOR
-				} else {
-					return 0; // Error
-				}
 				break;
 			case "nowcast-aqi":
 				var date = new Date();
