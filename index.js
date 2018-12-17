@@ -222,7 +222,7 @@ Awair.prototype = {
 									var aqvoc = parseFloat(aqsensors[aqsensor]);
 									var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp);
 									if(that.logging){that.log(aqtvoc)};
-									aqtvoc = parseFloat(aqtvoc.toFixed(1));
+									aqtvoc = parseFloat(aqtvoc);
 									aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
 										if(that.logging){that.log(result)};
 										voc = result.aqi;
