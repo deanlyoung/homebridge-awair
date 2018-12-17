@@ -226,6 +226,7 @@ Awair.prototype = {
 									aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
 										if(that.logging){that.log(JSON.stringify(result))};
 										voc = result.aqi;
+										if(that.logging){that.log("voc: " + voc)};
 									}).catch(err => {
 										if(that.logging){that.log("voc: " + err)};
 									})
@@ -236,6 +237,7 @@ Awair.prototype = {
 									aqibot.AQICalculator.getAQIResult("PM10", dusty).then((result) => {
 										if(that.logging){that.log(JSON.stringify(result))};
 										pm10 = result.aqi;
+										if(that.logging){that.log("dust: " + pm10)};
 									}).catch(err => {
 										if(that.logging){that.log("dust: " + err)};
 									})
@@ -246,6 +248,7 @@ Awair.prototype = {
 									aqibot.AQICalculator.getAQIResult("PM2.5", pm25y).then((result) => {
 										if(that.logging){that.log(JSON.stringify(result))};
 										pm25 = result.aqi;
+										if(that.logging){that.log("pm25: " + pm25)};
 									}).catch(err => {
 										if(that.logging){that.log("pm25: " + err)};
 									})
@@ -256,6 +259,7 @@ Awair.prototype = {
 									aqibot.AQICalculator.getAQIResult("PM10", pm10y).then((result) => {
 										if(that.logging){that.log(JSON.stringify(result))};
 										pm10 = result.aqi;
+										if(that.logging){that.log("pm10: " + pm10)};
 									}).catch(err => {
 										if(that.logging){that.log("pm10: " + err)};
 									})
