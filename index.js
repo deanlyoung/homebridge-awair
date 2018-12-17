@@ -186,6 +186,13 @@ Awair.prototype = {
 				}
 				break;
 			case "aqi":
+				var aqtemp;
+				var aqatmos = 1;
+				
+				var pm25 = -1;
+				var pm10 = -1;
+				var voc = -1;
+				
 				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/latest";
 				var aqoptions = {
 					method: "GET",
@@ -198,18 +205,13 @@ Awair.prototype = {
 				
 				return request(aqoptions)
 					.then(function(response) {
-						var pm25 = -1;
-						var pm10 = -1;
-						var voc = -1;
-						
 						var aqdata = response.data;
 						var aqsensors = aqdata
 							.map(aqsensor => aqsensor.sensors)
 							.reduce((a, b) => a.concat(b))
 							.reduce((a, b) => {a[b.comp] = a[b.comp] ? 0.5*(a[b.comp] + b.value) : b.value; return a}, {});
 						
-						var aqtemp = parseFloat(aqsensors.temp);
-						var aqatmos = 1;
+						aqtemp = parseFloat(aqsensors.temp);
 						
 						for (var aqsensor in aqsensors) {
 							switch (aqsensor) {
@@ -296,6 +298,20 @@ Awair.prototype = {
 				date.setHours(date.getHours() - 12);
 				var from = date.toISOString();
 				
+				var hash = Object.create(null),
+					grouped = [],
+					hours = [],
+					vocs = [],
+					pm25s = [],
+					pm10s = [];
+				
+				var aqtemp;
+				var aqatmos = 1;
+				
+				var pm25a = -1;
+				var pm10a = -1;
+				var voca = -1;
+				
 				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/15-min-avg?from=" + from;
 				var aqoptions = {
 					method: "GET",
@@ -317,15 +333,7 @@ Awair.prototype = {
 							.reduce((a, b) => a.concat(b))
 							.reduce((a, b) => {a[b.comp] = a[b.comp] ? 0.5*(a[b.comp] + b.value) : b.value; return a}, {});
 						
-						var aqtemp = parseFloat(aqsensors.temp);
-						var aqatmos = 1;
-						
-						var hash = Object.create(null),
-							grouped = [],
-							hours = [],
-							vocs = [],
-							pm25s = [],
-							pm10s = [];
+						aqtemp = parseFloat(aqsensors.temp);
 						
 						aqdata.forEach(function (a) {
 							var key = a.timestamp.slice(11, 13);
@@ -373,9 +381,6 @@ Awair.prototype = {
 						if(that.logging){that.log("Error retrieving air quality data: " + err)};
 					});
 				
-				var pm25a = -1;
-				var pm10a = -1;
-				var voca = -1;
 				if (pm25s.length > 0) {
 					// PM2.5 (ug/m^3)
 					aqibot.AQICalculator.getNowcastAQIResult(PollutantType.PM25, pm25s).then((result)=>{
