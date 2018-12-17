@@ -21,10 +21,11 @@ function Awair(log, config) {
 	this.carbonDioxideThreshold = Number(config["carbonDioxideThreshold"] || 0); // ppm, 0 = OFF
 	this.vocMW = Number(config["voc_mixture_mw"] || 72.66578273019740); // Molecular Weight (g/mol) of a reference VOC gas or mixture
 	this.airQualityMethod = config["air_quality_method"] || "awair-score"; // awair-score, aqi, nowcast-aqi
+	this.userType = config["userType"] || "users/self"; // users/self, orgs/###
 	this.polling_interval = Number(config["polling_interval"] || 900); // seconds (15 mins)
 	this.limit = Number(config["limit"] || 12); // consecutive 10 second
 	this.endpoint = config["endpoint"] || "15-min-avg"; // 15-min-avg, 5-min-avg, raw, latest
-	this.url = config["url"] || "http://developer-apis.awair.is/v1/users/self/devices/" + this.devType + "/" + this.devId + "/air-data/" + this.endpoint + "?limit=" + this.limit + "&desc=true";
+	this.url = config["url"] || "http://developer-apis.awair.is/v1/" + this.userType + "/devices/" + this.devType + "/" + this.devId + "/air-data/" + this.endpoint + "?limit=" + this.limit + "&desc=true";
 }
 
 Awair.prototype = {
@@ -185,7 +186,7 @@ Awair.prototype = {
 				}
 				break;
 			case "aqi":
-				var aqurl = "http://developer-apis.awair.is/v1/users/self/devices/" + that.devType + "/" + that.devId + "/air-data/latest";
+				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/latest";
 				var aqoptions = {
 					method: "GET",
 					uri: aqurl,
@@ -295,7 +296,7 @@ Awair.prototype = {
 				date.setHours(date.getHours() - 12);
 				var from = date.toISOString();
 				
-				var aqurl = "http://developer-apis.awair.is/v1/users/self/devices/" + that.devType + "/" + that.devId + "/air-data/15-min-avg?from=" + from;
+				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/15-min-avg?from=" + from;
 				var aqoptions = {
 					method: "GET",
 					uri: aqurl,

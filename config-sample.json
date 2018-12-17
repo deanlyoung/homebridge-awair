@@ -21,6 +21,7 @@
 			"carbonDioxideThreshold": 1200,
 			"voc_mixture_mw": 72.66578273019740,
 			"air_quality_method": "awair-score",
+			"userType": "users/self",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
@@ -36,6 +37,7 @@
 			"carbonDioxideThreshold": 1200,
 			"voc_mixture_mw": 72.66578273019740,
 			"air_quality_method": "awair-score",
+			"userType": "users/self",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
@@ -51,6 +53,7 @@
 			"carbonDioxideThreshold": 0,
 			"voc_mixture_mw": 72.66578273019740,
 			"air_quality_method": "awair-score",
+			"userType": "users/self",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
@@ -66,6 +69,7 @@
 			"carbonDioxideThreshold": 1200,
 			"voc_mixture_mw": 72.66578273019740,
 			"air_quality_method": "awair-score",
+			"userType": "users/self",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
@@ -81,6 +85,7 @@
 			"carbonDioxideThreshold": 1200,
 			"voc_mixture_mw": 72.66578273019740,
 			"air_quality_method": "awair-score",
+			"userType": "users/self",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
