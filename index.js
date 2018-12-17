@@ -220,7 +220,8 @@ Awair.prototype = {
 								case "voc":
 									// Chemicals (ug/m^3)
 									var aqvoc = parseFloat(aqsensors[aqsensor]);
-									var aqtvoc = this.convertChemicals(aqvoc, aqatmos, aqtemp);
+									var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp);
+									if(that.logging){that.log(aqtvoc)};
 									aqtvoc = parseFloat(aqtvoc.toFixed(1));
 									aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
 										if(that.logging){that.log(result)};
