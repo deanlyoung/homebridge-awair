@@ -194,7 +194,7 @@ Awair.prototype = {
 				var voc = -1;
 				
 				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/latest";
-				if(that.logging){that.log(JSON.stringify(aqurl))};
+				if(that.logging){that.log(aqurl)};
 				
 				var aqoptions = {
 					method: "GET",
@@ -315,7 +315,7 @@ Awair.prototype = {
 				var voca = -1;
 				
 				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/15-min-avg?from=" + from;
-				if(that.logging){that.log(JSON.stringify(aqurl))};
+				if(that.logging){that.log(aqurl)};
 				
 				var aqoptions = {
 					method: "GET",
