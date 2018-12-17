@@ -216,8 +216,8 @@ Awair.prototype = {
 								case "voc":
 									// Chemicals (ug/m^3)
 									var aqvoc = parseFloat(aqsensors[aqsensor]);
-									var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp).toFixed(1);
-									aqtvoc = parseFloat(aqtvoc);
+									var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp);
+									aqtvoc = parseFloat(aqtvoc.toFixed(1));
 									aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
 										if(that.logging){that.log(result)};
 										voc = result.aqi;
@@ -399,8 +399,8 @@ Awair.prototype = {
 				} else if (vocs.length > 0) {
 					// Chemicals (ug/m^3)
 					var aqvoc = parseFloat(voca[0]);
-					var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp).toFixed();
-					aqtvoc = parseFloat(aqtvoc);
+					var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp);
+					aqtvoc = parseFloat(aqtvoc.toFixed());
 					aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
 						if(that.logging){that.log(JSON.stringify(result))};
 						voca = result.aqi;
