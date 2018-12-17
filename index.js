@@ -166,7 +166,6 @@ Awair.prototype = {
 	convertScore: function(score) {
 		var that = this;
 		var method = that.airQualityMethod;
-		var aqi;
 		
 		switch (method) {
 			case "awair-score":
@@ -189,7 +188,8 @@ Awair.prototype = {
 				var aqtemp,
 					pm25,
 					pm10,
-					voc;
+					voc,
+					aqi;
 				var aqatmos = 1;
 				
 				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/latest";
