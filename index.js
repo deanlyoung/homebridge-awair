@@ -186,12 +186,11 @@ Awair.prototype = {
 				}
 				break;
 			case "aqi":
-				var aqtemp;
+				var aqtemp,
+					pm25,
+					pm10,
+					voc;
 				var aqatmos = 1;
-				
-				var pm25 = -1;
-				var pm10 = -1;
-				var voc = -1;
 				
 				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/latest";
 				if(that.logging){that.log(aqurl)};
