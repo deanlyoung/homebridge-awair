@@ -194,6 +194,8 @@ Awair.prototype = {
 				var voc = -1;
 				
 				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/latest";
+				if(that.logging){that.log(JSON.stringify(aqurl))};
+				
 				var aqoptions = {
 					method: "GET",
 					uri: aqurl,
@@ -258,7 +260,7 @@ Awair.prototype = {
 									})
 									break;
 								default:
-									if(that.logging){that.log("[" + that.serial + "] ignoring " + JSON.stringify(aqsensor) + ": " + parseFloat(aqsensors[aqsensor]))};
+									if(that.logging){that.log("[" + that.serial + "] ignoring " + JSON.stringify(aqsensor) + " for AQI: " + parseFloat(aqsensors[aqsensor]))};
 									break;
 							}
 						}
@@ -313,6 +315,8 @@ Awair.prototype = {
 				var voca = -1;
 				
 				var aqurl = "http://developer-apis.awair.is/v1/" + that.userType + "/devices/" + that.devType + "/" + that.devId + "/air-data/15-min-avg?from=" + from;
+				if(that.logging){that.log(JSON.stringify(aqurl))};
+				
 				var aqoptions = {
 					method: "GET",
 					uri: aqurl,
@@ -325,6 +329,8 @@ Awair.prototype = {
 				return request(aqoptions)
 					.then(function(response) {
 						var aqdata = response.data;
+						if(that.logging){that.log(JSON.stringify(aqdata))};
+						
 						var aqdatas = aqdata[0];
 						var aqdatasx = [];
 						aqdatasx.push(aqdatas)
