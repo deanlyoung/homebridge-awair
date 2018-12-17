@@ -1,6 +1,7 @@
 var Service, Characteristic;
 var request = require("request-promise");
 const packageJSON = require("./package.json");
+let aqibot = require("aqi-bot");
 
 module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
@@ -19,6 +20,7 @@ function Awair(log, config) {
 	this.serial = config["serial"] || this.devType + "_" + this.devId;
 	this.carbonDioxideThreshold = Number(config["carbonDioxideThreshold"] || 0); // ppm, 0 = OFF
 	this.vocMW = Number(config["voc_mixture_mw"] || 72.66578273019740); // Molecular Weight (g/mol) of a reference VOC gas or mixture
+	this.airQualityMethod = config["air_quality_method"] || "awair-score"; // awair-score, aqi, nowcast-aqi
 	this.polling_interval = Number(config["polling_interval"] || 900); // seconds (15 mins)
 	this.limit = Number(config["limit"] || 12); // consecutive 10 second
 	this.endpoint = config["endpoint"] || "15-min-avg"; // 15-min-avg, 5-min-avg, raw, latest
@@ -161,19 +163,283 @@ Awair.prototype = {
 	},
 	
 	convertScore: function(score) {
-		var score = parseFloat(score);
-		if (score >= 90) {
-			return 1; // EXCELLENT
-		} else if (score >= 80 && score < 90) {
-			return 2; // GOOD
-		} else if (score >= 60 && score < 80) {
-			return 3; // FAIR
-		} else if (score >= 50 && score < 60) {
-			return 4; // INFERIOR
-		} else if (score < 50) {
-			return 5; // POOR
-		} else {
-			return 0; // Error
+		var that = this;
+		var method = that.airQualityMethod;
+		var aqi;
+		
+		switch (method) {
+			case "awair-score":
+				var score = parseFloat(score);
+				if (score >= 90) {
+					return 1; // EXCELLENT
+				} else if (score >= 80 && score < 90) {
+					return 2; // GOOD
+				} else if (score >= 60 && score < 80) {
+					return 3; // FAIR
+				} else if (score >= 50 && score < 60) {
+					return 4; // INFERIOR
+				} else if (score < 50) {
+					return 5; // POOR
+				} else {
+					return 0; // Error
+				}
+				break;
+			case "aqi":
+				var aqurl = "http://developer-apis.awair.is/v1/users/self/devices/" + that.devType + "/" + that.devId + "/air-data/latest";
+				var aqoptions = {
+					method: "GET",
+					uri: aqurl,
+					json: true,
+					headers: {
+						Authorization: "Bearer " + that.token
+					}
+				};
+				
+				return request(aqoptions)
+					.then(function(response) {
+						var pm25 = -1;
+						var pm10 = -1;
+						var voc = -1;
+						
+						var aqdata = response.data;
+						var aqsensors = aqdata
+							.map(aqsensor => aqsensor.sensors)
+							.reduce((a, b) => a.concat(b))
+							.reduce((a, b) => {a[b.comp] = a[b.comp] ? 0.5*(a[b.comp] + b.value) : b.value; return a}, {});
+						
+						var aqtemp = parseFloat(aqsensors.temp);
+						var aqatmos = 1;
+						
+						for (var aqsensor in aqsensors) {
+							case "voc":
+								// Chemicals (ug/m^3)
+								var aqvoc = parseFloat(aqsensors[aqsensor]);
+								var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp).toFixed(1);
+								aqtvoc = parseFloat(aqtvoc);
+								aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
+									if(that.logging){that.log(result)};
+									voc = result.aqi;
+								}).catch(err => {
+									if(that.logging){that.log(err)};
+								})
+								break;
+							case "dust":
+								// Dust (ug/m^3)
+								var dusty = parseFloat(aqsensor.dust.toFixed());
+								aqibot.AQICalculator.getAQIResult("PM10", dusty).then((result) => {
+									if(that.logging){that.log(result)};
+									pm10 = result.aqi;
+								}).catch(err => {
+									if(that.logging){that.log(err)};
+								})
+								break;
+							case "pm25":
+								// PM2.5 (ug/m^3)
+								var pm25y = parseFloat(aqsensor.pm25.toFixed(1));
+								aqibot.AQICalculator.getAQIResult("PM2.5", pm25y).then((result) => {
+									if(that.logging){that.log(result)};
+									pm25 = result.aqi;
+								}).catch(err => {
+									if(that.logging){that.log(err)};
+								})
+								break;
+							case "pm10":
+								// PM10 (ug/m^3)
+								var pm10y = parseFloat(aqsensor.pm10.toFixed());
+								aqibot.AQICalculator.getAQIResult("PM10", pm10y).then((result) => {
+									if(that.logging){that.log(result)};
+									pm10 = result.aqi;
+								}).catch(err => {
+									if(that.logging){that.log(err)};
+								})
+								break;
+							default:
+								if(that.logging){that.log("[" + that.serial + "] ignoring " + JSON.stringify(aqsensor) + ": " + parseFloat(aqsensors[aqsensor]))};
+								break;
+						}
+					})
+					.catch(function(err) {
+						if(that.logging){that.log("Error retrieving air quality data: " + err)};
+					});
+				
+				if (pm25 >= 0) {
+					aqi = pm25;
+				} else if (pm10 >= 0) {
+					aqi = pm10;
+				} else if (voc >= 0) {
+					aqi = voc;
+				} else {
+					aqi = -1;
+				}
+				
+				if(that.logging){that.log("AQI: " + aqi)};
+				
+				if (aqi >= 0 && aqi <= 50) {
+					return 1; // EXCELLENT
+				} else if (aqi > 50 && aqi <= 100) {
+					return 2; // GOOD
+				} else if (aqi > 100 && aqi <= 150) {
+					return 3; // FAIR
+				} else if (aqi > 150 && aqi <= 200) {
+					return 4; // INFERIOR
+				} else if (aqi > 200) {
+					return 5; // POOR
+				} else {
+					return 0; // Error
+				}
+				break;
+			case "aqi-nowcast":
+				var date = new Date();
+				date.setHours(date.getHours() - 12);
+				var from = date.toISOString();
+				
+				var aqurl = "http://developer-apis.awair.is/v1/users/self/devices/" + that.devType + "/" + that.devId + "/air-data/15-min-avg?from=" + from;
+				var aqoptions = {
+					method: "GET",
+					uri: aqurl,
+					json: true,
+					headers: {
+						Authorization: "Bearer " + that.token
+					}
+				};
+				
+				return request(aqoptions)
+					.then(function(response) {
+						var aqdata = response.data;
+						var aqsensors = aqdata
+							.map(aqsensor => aqsensor.sensors)
+							.reduce((a, b) => a.concat(b))
+							.reduce((a, b) => {a[b.comp] = a[b.comp] ? 0.5*(a[b.comp] + b.value) : b.value; return a}, {});
+						
+						var aqtemp = parseFloat(aqsensors.temp);
+						var aqatmos = 1;
+						
+						var hash = Object.create(null),
+							grouped = [],
+							hours = [],
+							vocs = [],
+							pm25s = [],
+							pm10s = [];
+						
+						aqdata.forEach(function (a) {
+							var key = a.timestamp.slice(11, 13);
+							if (!hash[key]) {
+								hash[key] = { hour: key + ':00', sensors: [] };
+								grouped.push(hash[key]);
+							}
+							hash[key].sensors.push(a.sensors);
+						});
+						
+						grouped.sort(function (a, b) {
+							return b.hour.localeCompare(a.hour);
+						});
+						
+						if(that.logging){that.log(JSON.stringify(grouped))};
+						
+						grouped.forEach(function (x) {
+							var hour = x.hour;
+							var aqsensors = x.sensors
+								.reduce((a, b) => a.concat(b))
+								.reduce((a, b) => {a[b.comp] = a[b.comp] ? 0.5*(a[b.comp] + b.value) : b.value; return a}, {});
+							
+							for (var aqsensor in aqsensors) {
+								switch (aqsensor) {
+									case "voc":
+										vocs.push(parseFloat(aqsensors[aqsensor].toFixed(1)));
+										break;
+									case "dust":
+										pm10s.push(parseFloat(aqsensors[aqsensor].toFixed()));
+										break;
+									case "pm25":
+										pm25s.push(parseFloat(aqsensors[aqsensor].toFixed(1)));
+										break;
+									case "pm10":
+										pm10s.push(parseFloat(aqsensors[aqsensor].toFixed()));
+										break;
+									default:
+										if(that.logging){that.log("No relevant sensors found.")};
+										break;
+								}
+							}
+						});
+					})
+					.catch(function(err) {
+						if(that.logging){that.log("Error retrieving air quality data: " + err)};
+					});
+				
+				var pm25a = -1;
+				var pm10a = -1;
+				var voca = -1;
+				if (pm25s.length > 0) {
+					// PM2.5 (ug/m^3)
+					aqibot.AQICalculator.getNowcastAQIResult(PollutantType.PM25, pm25s).then((result)=>{
+						if(that.logging){that.log(JSON.stringify(result))};
+						pm25a = result.aqi;
+					}).catch(err =>{
+						if(that.logging){that.log(err)};
+						pm25a = -1;
+					})
+					aqi = pm25a;
+				} else if (pm10s.length > 0) {
+					// PM10 (ug/m^3)
+					aqibot.AQICalculator.getNowcastAQIResult(PollutantType.PM10, pm10s).then((result) => {
+						if(that.logging){that.log(JSON.stringify(result))};
+						pm10a = result.aqi;
+					}).catch(err => {
+						if(that.logging){that.log(err)};
+						pm10a = -1;
+					})
+					aqi = pm10a;
+				} else if (vocs.length > 0) {
+					// Chemicals (ug/m^3)
+					var aqvoc = parseFloat(voca[0]);
+					var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp).toFixed();
+					aqtvoc = parseFloat(aqtvoc);
+					aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
+						if(that.logging){that.log(JSON.stringify(result))};
+						voca = result.aqi;
+					}).catch(err => {
+						if(that.logging){that.log(err)};
+						voca = -1;
+					})
+					aqi = voca;
+				} else {
+					aqi = -1;
+				}
+				
+				if(that.logging){that.log("AQI: " + aqi)};
+				
+				if (aqi >= 0 && aqi <= 50) {
+					return 1; // EXCELLENT
+				} else if (aqi > 50 && aqi <= 100) {
+					return 2; // GOOD
+				} else if (aqi > 100 && aqi <= 150) {
+					return 3; // FAIR
+				} else if (aqi > 150 && aqi <= 200) {
+					return 4; // INFERIOR
+				} else if (aqi > 200) {
+					return 5; // POOR
+				} else {
+					return 0; // Error
+				}
+				break;
+			default:
+				if(that.logging){that.log("No air quality method specified. Defaulting to awair-score method.")};
+				var score = parseFloat(score);
+				if (score >= 90) {
+					return 1; // EXCELLENT
+				} else if (score >= 80 && score < 90) {
+					return 2; // GOOD
+				} else if (score >= 60 && score < 80) {
+					return 3; // FAIR
+				} else if (score >= 50 && score < 60) {
+					return 4; // INFERIOR
+				} else if (score < 50) {
+					return 5; // POOR
+				} else {
+					return 0; // Error
+				}
+				break;
 		}
 	},
 	

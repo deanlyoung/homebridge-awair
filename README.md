@@ -49,6 +49,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair",
 		"carbonDioxideThreshold": 1200,
 		"voc_mixture_mw": 72.66578273019740,
+		"air_quality_method": "awair-score",
 		"endpoint": "15-min-avg",
 		"polling_interval": 900,
 		"limit": 12
@@ -63,6 +64,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair Glow",
 		"carbonDioxideThreshold": 1200,
 		"voc_mixture_mw": 72.66578273019740,
+		"air_quality_method": "aqi",
 		"endpoint": "15-min-avg",
 		"polling_interval": 900,
 		"limit": 12
@@ -77,6 +79,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair Mint",
 		"carbonDioxideThreshold": 0,
 		"voc_mixture_mw": 72.66578273019740,
+		"air_quality_method": "nowcast-aqi",
 		"endpoint": "15-min-avg",
 		"polling_interval": 900,
 		"limit": 12
@@ -91,6 +94,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair Omni",
 		"carbonDioxideThreshold": 1200,
 		"voc_mixture_mw": 72.66578273019740,
+		"air_quality_method": "awair-score",
 		"endpoint": "15-min-avg",
 		"polling_interval": 900,
 		"limit": 12
@@ -105,6 +109,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"model": "Awair 2nd Edition",
 		"carbonDioxideThreshold": 1200,
 		"voc_mixture_mw": 72.66578273019740,
+		"air_quality_method": "aqi",
 		"endpoint": "15-min-avg",
 		"polling_interval": 900,
 		"limit": 12
@@ -124,6 +129,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		 `model`	=> Device Model (OPTIONAL, default = `devType`, options: `Awair`, `Awair Glow`, `Awair Mint`, `Awair Omni`, `Awair 2nd Edition`)
 `carbonDioxideThreshold`	=> (OPTIONAL, default = `0` [i.e. OFF], the level at which HomeKit will trigger an alert for the CO2 in ppm)
 	`voc_mixture_mw`	=> The Molecular Weight (g/mol) of a reference gas or mixture that you use to convert from ppb to ug/m^3 (OPTIONAL, default = `72.66578273019740`)
+	`air_quality_method`	=> Air quality calculation method used to define the Air Quality Chracteristic (OPTIONAL, default = `awair-score`, options: `awair-score`, `aqi`, `nowcast-aqi`)
 	      `endpoint`	=> The `/air-data` endpoint to use (OPTIONAL, default = `15-min-avg`, options: `15-min-avg`, `5-min-avg`, `raw`, or `latest`)
 	       `polling`	=> The frequency (OPTIONAL, default = `900` (15 minutes), units: seconds, that you would like to update the data in HomeKit)
 		 `limit`	=> Number of consecutive 10 second data points returned per request, used for custom averaging of sensor values from `/raw` endpoint (OPTIONAL, default = `12` i.e. 2 minute average)
@@ -144,3 +150,4 @@ See response.sample.json
 - Another Awair plugin: https://github.com/henrypoydar/homebridge-awair-glow
 - Reference AQ plugin: https://github.com/toto/homebridge-airrohr
 - Refenerce temperature plugin: https://github.com/metbosch/homebridge-http-temperature
+- AQI Calculation NPM package: https://www.npmjs.com/package/aqi-bot

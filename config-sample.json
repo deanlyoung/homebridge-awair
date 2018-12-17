@@ -20,6 +20,7 @@
 			"model": "Awair",
 			"carbonDioxideThreshold": 1200,
 			"voc_mixture_mw": 72.66578273019740,
+			"air_quality_method": "awair-score",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
@@ -34,6 +35,7 @@
 			"model": "Awair Glow",
 			"carbonDioxideThreshold": 1200,
 			"voc_mixture_mw": 72.66578273019740,
+			"air_quality_method": "awair-score",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
@@ -48,6 +50,7 @@
 			"model": "Awair Mint",
 			"carbonDioxideThreshold": 0,
 			"voc_mixture_mw": 72.66578273019740,
+			"air_quality_method": "awair-score",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
@@ -62,6 +65,7 @@
 			"model": "Awair Omni",
 			"carbonDioxideThreshold": 1200,
 			"voc_mixture_mw": 72.66578273019740,
+			"air_quality_method": "awair-score",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
@@ -76,6 +80,7 @@
 			"model": "Awair 2nd Edition",
 			"carbonDioxideThreshold": 1200,
 			"voc_mixture_mw": 72.66578273019740,
+			"air_quality_method": "awair-score",
 			"endpoint": "15-min-avg",
 			"polling_interval": 900,
 			"limit": 12
