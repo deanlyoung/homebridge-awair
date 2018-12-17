@@ -223,6 +223,7 @@ Awair.prototype = {
 									var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp);
 									if(that.logging){that.log(aqtvoc)};
 									aqtvoc = parseFloat(aqtvoc);
+									aqtvoc = Math.round(aqtvoc * 10) / 10;
 									aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
 										if(that.logging){that.log(JSON.stringify(result))};
 										voc = result.aqi;
@@ -233,6 +234,7 @@ Awair.prototype = {
 								case "dust":
 									// Dust (ug/m^3)
 									var dusty = parseFloat(aqsensor.dust);
+									dusty = Math.round(dusty);
 									aqibot.AQICalculator.getAQIResult("PM10", dusty).then((result) => {
 										if(that.logging){that.log(JSON.stringify(result))};
 										pm10 = result.aqi;
@@ -243,6 +245,7 @@ Awair.prototype = {
 								case "pm25":
 									// PM2.5 (ug/m^3)
 									var pm25y = parseFloat(aqsensor.pm25);
+									pm25y = Math.round(pm25y * 10) / 10;
 									aqibot.AQICalculator.getAQIResult("PM2.5", pm25y).then((result) => {
 										if(that.logging){that.log(JSON.stringify(result))};
 										pm25 = result.aqi;
@@ -253,6 +256,7 @@ Awair.prototype = {
 								case "pm10":
 									// PM10 (ug/m^3)
 									var pm10y = parseFloat(aqsensor.pm10);
+									pm10y = Math.round(pm10y);
 									aqibot.AQICalculator.getAQIResult("PM10", pm10y).then((result) => {
 										if(that.logging){that.log(JSON.stringify(result))};
 										pm10 = result.aqi;
