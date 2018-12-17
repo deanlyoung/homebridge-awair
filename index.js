@@ -220,7 +220,7 @@ Awair.prototype = {
 								case "voc":
 									// Chemicals (ug/m^3)
 									var aqvoc = parseFloat(aqsensors[aqsensor]);
-									var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp);
+									var aqtvoc = this.convertChemicals(aqvoc, aqatmos, aqtemp);
 									aqtvoc = parseFloat(aqtvoc.toFixed(1));
 									aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
 										if(that.logging){that.log(result)};
@@ -298,7 +298,7 @@ Awair.prototype = {
 					return 0; // Error
 				}
 				break;
-			case "aqi-nowcast":
+			case "nowcast-aqi":
 				var date = new Date();
 				date.setHours(date.getHours() - 12);
 				var from = date.toISOString();
