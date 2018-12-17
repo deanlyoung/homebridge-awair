@@ -231,7 +231,8 @@ Awair.prototype = {
 									break;
 								case "dust":
 									// Dust (ug/m^3)
-									var dusty = parseFloat(aqsensor.dust.toFixed());
+									var dusty = aqsensor.dust;
+									dusty = parseFloat(dusty.toFixed());
 									aqibot.AQICalculator.getAQIResult("PM10", dusty).then((result) => {
 										if(that.logging){that.log(result)};
 										pm10 = result.aqi;
@@ -241,7 +242,8 @@ Awair.prototype = {
 									break;
 								case "pm25":
 									// PM2.5 (ug/m^3)
-									var pm25y = parseFloat(aqsensor.pm25.toFixed(1));
+									var pm25y = aqsensor.pm25;
+									pm25y = parseFloat(pm25y.toFixed(1));
 									aqibot.AQICalculator.getAQIResult("PM2.5", pm25y).then((result) => {
 										if(that.logging){that.log(result)};
 										pm25 = result.aqi;
@@ -251,7 +253,8 @@ Awair.prototype = {
 									break;
 								case "pm10":
 									// PM10 (ug/m^3)
-									var pm10y = parseFloat(aqsensor.pm10.toFixed());
+									var pm10y = aqsensor.pm10;
+									pm10y = parseFloat(pm10y.toFixed());
 									aqibot.AQICalculator.getAQIResult("PM10", pm10y).then((result) => {
 										if(that.logging){that.log(result)};
 										pm10 = result.aqi;
@@ -361,6 +364,8 @@ Awair.prototype = {
 							var aqsensors = x.sensors
 								.reduce((a, b) => a.concat(b))
 								.reduce((a, b) => {a[b.comp] = a[b.comp] ? 0.5*(a[b.comp] + b.value) : b.value; return a}, {});
+							
+							if(that.logging){that.log(JSON.stringify(aqsensors))};
 							
 							for (var aqsensor in aqsensors) {
 								switch (aqsensor) {
