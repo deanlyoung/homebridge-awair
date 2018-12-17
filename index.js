@@ -211,51 +211,53 @@ Awair.prototype = {
 						var aqatmos = 1;
 						
 						for (var aqsensor in aqsensors) {
-							case "voc":
-								// Chemicals (ug/m^3)
-								var aqvoc = parseFloat(aqsensors[aqsensor]);
-								var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp).toFixed(1);
-								aqtvoc = parseFloat(aqtvoc);
-								aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
-									if(that.logging){that.log(result)};
-									voc = result.aqi;
-								}).catch(err => {
-									if(that.logging){that.log(err)};
-								})
-								break;
-							case "dust":
-								// Dust (ug/m^3)
-								var dusty = parseFloat(aqsensor.dust.toFixed());
-								aqibot.AQICalculator.getAQIResult("PM10", dusty).then((result) => {
-									if(that.logging){that.log(result)};
-									pm10 = result.aqi;
-								}).catch(err => {
-									if(that.logging){that.log(err)};
-								})
-								break;
-							case "pm25":
-								// PM2.5 (ug/m^3)
-								var pm25y = parseFloat(aqsensor.pm25.toFixed(1));
-								aqibot.AQICalculator.getAQIResult("PM2.5", pm25y).then((result) => {
-									if(that.logging){that.log(result)};
-									pm25 = result.aqi;
-								}).catch(err => {
-									if(that.logging){that.log(err)};
-								})
-								break;
-							case "pm10":
-								// PM10 (ug/m^3)
-								var pm10y = parseFloat(aqsensor.pm10.toFixed());
-								aqibot.AQICalculator.getAQIResult("PM10", pm10y).then((result) => {
-									if(that.logging){that.log(result)};
-									pm10 = result.aqi;
-								}).catch(err => {
-									if(that.logging){that.log(err)};
-								})
-								break;
-							default:
-								if(that.logging){that.log("[" + that.serial + "] ignoring " + JSON.stringify(aqsensor) + ": " + parseFloat(aqsensors[aqsensor]))};
-								break;
+							switch (aqsensor) {
+								case "voc":
+									// Chemicals (ug/m^3)
+									var aqvoc = parseFloat(aqsensors[aqsensor]);
+									var aqtvoc = that.convertChemicals(aqvoc, aqatmos, aqtemp).toFixed(1);
+									aqtvoc = parseFloat(aqtvoc);
+									aqibot.AQICalculator.getAQIResult("CO", aqtvoc).then((result) => {
+										if(that.logging){that.log(result)};
+										voc = result.aqi;
+									}).catch(err => {
+										if(that.logging){that.log(err)};
+									})
+									break;
+								case "dust":
+									// Dust (ug/m^3)
+									var dusty = parseFloat(aqsensor.dust.toFixed());
+									aqibot.AQICalculator.getAQIResult("PM10", dusty).then((result) => {
+										if(that.logging){that.log(result)};
+										pm10 = result.aqi;
+									}).catch(err => {
+										if(that.logging){that.log(err)};
+									})
+									break;
+								case "pm25":
+									// PM2.5 (ug/m^3)
+									var pm25y = parseFloat(aqsensor.pm25.toFixed(1));
+									aqibot.AQICalculator.getAQIResult("PM2.5", pm25y).then((result) => {
+										if(that.logging){that.log(result)};
+										pm25 = result.aqi;
+									}).catch(err => {
+										if(that.logging){that.log(err)};
+									})
+									break;
+								case "pm10":
+									// PM10 (ug/m^3)
+									var pm10y = parseFloat(aqsensor.pm10.toFixed());
+									aqibot.AQICalculator.getAQIResult("PM10", pm10y).then((result) => {
+										if(that.logging){that.log(result)};
+										pm10 = result.aqi;
+									}).catch(err => {
+										if(that.logging){that.log(err)};
+									})
+									break;
+								default:
+									if(that.logging){that.log("[" + that.serial + "] ignoring " + JSON.stringify(aqsensor) + ": " + parseFloat(aqsensors[aqsensor]))};
+									break;
+							}
 						}
 					})
 					.catch(function(err) {
