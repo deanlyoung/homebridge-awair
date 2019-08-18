@@ -57,7 +57,9 @@ Awair.prototype = {
 				that.airQualityService
 					.setCharacteristic(Characteristic.AirQuality, that.convertScore(score));
 				that.airQualityService.isPrimaryService = true;
-				if (that.devType == "awair-mint" || that.devType == "awair-glow-c") {
+				if (that.devType == "awair-mint") {
+					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.lightLevelService];
+				} else if (that.devType == "awair-glow-c") {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService];
 				} else if (that.devType == "awair-omni") {
 					that.airQualityService.linkedServices = [that.humidityService, that.temperatureService, that.carbonDioxideService, that.lightLevelService];
@@ -153,7 +155,7 @@ Awair.prototype = {
 						.setCharacteristic(Characteristic.CarbonDioxideLevel, "--")
 						.setCharacteristic(Characteristic.StatusFault, 1);
 				};
-				if (that.devType == "awair-omni") {
+				if (that.devType == "awair-omni" || that.devType == "awair-mint") {
 					that.lightLevelService
 						.setCharacteristic(Characteristic.CurrentAmbientLightLevel, "--")
 						.setCharacteristic(Characteristic.StatusFault, 1);
@@ -547,7 +549,7 @@ Awair.prototype = {
 			services.push(carbonDioxideService);
 		}
 		
-		if (this.devType == "awair-omni") {
+		if (this.devType == "awair-omni" || that.devType == "awair-mint") {
 			var lightLevelService = new Service.LightSensor();
 			lightLevelService
 				.setCharacteristic(Characteristic.CurrentAmbientLightLevel, "--");
