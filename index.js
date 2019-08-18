@@ -113,19 +113,16 @@ Awair.prototype = {
 							// Dust (ug/m^3)
 							that.airQualityService
 								.setCharacteristic(Characteristic.PM10Density, parseFloat(sensors[sensor]));
-								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "pm25":
 							// PM2.5 (ug/m^3)
 							that.airQualityService
 								.setCharacteristic(Characteristic.PM2_5Density, parseFloat(sensors[sensor]));
-								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "pm10":
 							// PM10 (ug/m^3)
 							that.airQualityService
 								.setCharacteristic(Characteristic.PM10Density, parseFloat(sensors[sensor]));
-								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "lux":
 							// Light (lux)
