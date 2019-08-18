@@ -130,6 +130,7 @@ Awair.prototype = {
 							// Light (lux)
 							that.lightLevelService
 								.setCharacteristic(Characteristic.CurrentAmbientLightLevel, parseFloat(sensors[sensor]));
+								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "spl_a":
 							// Sound (dBA)
@@ -549,7 +550,7 @@ Awair.prototype = {
 			services.push(carbonDioxideService);
 		}
 		
-		if (this.devType == "awair-omni" || that.devType == "awair-mint") {
+		if (this.devType == "awair-omni" || this.devType == "awair-mint") {
 			var lightLevelService = new Service.LightSensor();
 			lightLevelService
 				.setCharacteristic(Characteristic.CurrentAmbientLightLevel, "--");
