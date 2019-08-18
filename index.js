@@ -78,13 +78,11 @@ Awair.prototype = {
 							// Temperature (C)
 							that.temperatureService
 								.setCharacteristic(Characteristic.CurrentTemperature, parseFloat(sensors[sensor]))
-								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "humid":
 							// Humidity (%)
 							that.humidityService
 								.setCharacteristic(Characteristic.CurrentRelativeHumidity, parseFloat(sensors[sensor]))
-								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "co2":
 							// Carbon Dioxide (ppm)
@@ -92,7 +90,6 @@ Awair.prototype = {
 							var co2Detected;
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
-								.setCharacteristic(Characteristic.StatusFault, 0);
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
 								co2Detected = 1;
 								if(that.logging){that.log("[" + that.serial + "] CO2 HIGH: " + co2 + " > " + that.carbonDioxideThreshold)};
@@ -109,7 +106,6 @@ Awair.prototype = {
 							// Chemicals (ug/m^3)
 							that.airQualityService
 								.setCharacteristic(Characteristic.VOCDensity, tvoc)
-								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "dust":
 							// Dust (ug/m^3)
@@ -130,7 +126,6 @@ Awair.prototype = {
 							// Light (lux)
 							that.lightLevelService
 								.setCharacteristic(Characteristic.CurrentAmbientLightLevel, parseFloat(sensors[sensor]));
-								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "spl_a":
 							// Sound (dBA)
@@ -147,26 +142,21 @@ Awair.prototype = {
 				if(that.logging){that.log("[" + that.serial + "] " + err)};
 				that.temperatureService
 					.setCharacteristic(Characteristic.CurrentTemperature, "--")
-					.setCharacteristic(Characteristic.StatusFault, 1);
 				that.humidityService
 					.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--")
-					.setCharacteristic(Characteristic.StatusFault, 1);
 				if (that.devType != "awair-mint" && that.devType != "awair-glow-c") {
 					that.carbonDioxideService
 						.setCharacteristic(Characteristic.CarbonDioxideLevel, "--")
-						.setCharacteristic(Characteristic.StatusFault, 1);
 				};
 				if (that.devType == "awair-omni" || that.devType == "awair-mint") {
 					that.lightLevelService
 						.setCharacteristic(Characteristic.CurrentAmbientLightLevel, "--")
-						.setCharacteristic(Characteristic.StatusFault, 1);
 				};
 				that.airQualityService
 					.setCharacteristic(Characteristic.AirQuality, "--")
 					.setCharacteristic(Characteristic.VOCDensity, "--")
 					.setCharacteristic(Characteristic.PM10Density, "--")
 					.setCharacteristic(Characteristic.PM2_5Density, "--")
-					.setCharacteristic(Characteristic.StatusFault, 1);
 			});
 	},
 	
@@ -508,8 +498,6 @@ Awair.prototype = {
 			.setCharacteristic(Characteristic.PM10Density, "--")
 			.setCharacteristic(Characteristic.PM2_5Density, "--");
 		airQualityService
-			.addCharacteristic(Characteristic.StatusFault);
-		airQualityService
 			.getCharacteristic(Characteristic.VOCDensity)
 			.setProps({
 				minValue: 0,
@@ -522,8 +510,6 @@ Awair.prototype = {
 		temperatureService
 			.setCharacteristic(Characteristic.CurrentTemperature, "--");
 		temperatureService
-			.addCharacteristic(Characteristic.StatusFault);
-		temperatureService
 			.getCharacteristic(Characteristic.CurrentTemperature)
 			.setProps({
 				minValue: -100,
@@ -535,8 +521,6 @@ Awair.prototype = {
 		var humidityService = new Service.HumiditySensor();
 		humidityService
 			.setCharacteristic(Characteristic.CurrentRelativeHumidity, "--");
-		humidityService
-			.addCharacteristic(Characteristic.StatusFault);
 		this.humidityService = humidityService;
 		services.push(humidityService);
 		
@@ -544,8 +528,6 @@ Awair.prototype = {
 			var carbonDioxideService = new Service.CarbonDioxideSensor();
 			carbonDioxideService
 				.setCharacteristic(Characteristic.CarbonDioxideLevel, "--");
-			carbonDioxideService
-				.addCharacteristic(Characteristic.StatusFault);
 			this.carbonDioxideService = carbonDioxideService;
 			services.push(carbonDioxideService);
 		}
@@ -554,8 +536,6 @@ Awair.prototype = {
 			var lightLevelService = new Service.LightSensor();
 			lightLevelService
 				.setCharacteristic(Characteristic.CurrentAmbientLightLevel, "--");
-			lightLevelService
-				.addCharacteristic(Characteristic.StatusFault);
 			lightLevelService
 				.getCharacteristic(Characteristic.CurrentAmbientLightLevel)
 				.setProps({
