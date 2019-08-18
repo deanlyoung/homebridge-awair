@@ -128,7 +128,6 @@ Awair.prototype = {
 							// Light (lux)
 							that.lightLevelService
 								.setCharacteristic(Characteristic.CurrentAmbientLightLevel, parseFloat(sensors[sensor]));
-								.setCharacteristic(Characteristic.StatusFault, 0);
 							break;
 						case "spl_a":
 							// Sound (dBA)
