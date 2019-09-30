@@ -48,6 +48,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_123",
 		"model": "Awair",
 		"carbonDioxideThreshold": 1200,
+		"carbonDioxideThresholdOff": 1200,
 		"voc_mixture_mw": 72.66578273019740,
 		"air_quality_method": "awair-score",
 		"userType": "users/self",
@@ -64,6 +65,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_124",
 		"model": "Awair Glow",
 		"carbonDioxideThreshold": 1200,
+		"carbonDioxideThresholdOff": 900,
 		"voc_mixture_mw": 72.66578273019740,
 		"air_quality_method": "awair-score",
 		"userType": "users/self",
@@ -80,6 +82,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_125",
 		"model": "Awair Mint",
 		"carbonDioxideThreshold": 0,
+		"carbonDioxideThresholdOff": 0,
 		"voc_mixture_mw": 72.66578273019740,
 		"air_quality_method": "awair-score",
 		"userType": "users/self",
@@ -96,6 +99,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_126",
 		"model": "Awair Omni",
 		"carbonDioxideThreshold": 1200,
+		"carbonDioxideThresholdOff": 800,
 		"voc_mixture_mw": 72.66578273019740,
 		"air_quality_method": "awair-score",
 		"userType": "users/self",
@@ -112,6 +116,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"serial": "example-serial_127",
 		"model": "Awair 2nd Edition",
 		"carbonDioxideThreshold": 1200,
+		"carbonDioxideThresholdOff": 1000,
 		"voc_mixture_mw": 72.66578273019740,
 		"air_quality_method": "awair-score",
 		"userType": "users/self",
@@ -133,6 +138,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		`serial`	=> Serial Number (OPTIONAL, default = `devType_devId`, options: `mac-address` or `devType_devId`)
 		 `model`	=> Device Model (OPTIONAL, default = `devType`, options: `Awair`, `Awair Glow`, `Awair Mint`, `Awair Omni`, `Awair 2nd Edition`)
 `carbonDioxideThreshold`	=> (OPTIONAL, default = `0` [i.e. OFF], the level at which HomeKit will trigger an alert for the CO2 in ppm)
+`carbonDioxideThresholdOff`	=> (OPTIONAL, default = `0` [i.e. `carbonDioxideThreshold`], the level at which HomeKit will turn off the trigger alert for the CO2 in ppm, to ensure that it doesn't trigger on/off too frequently choose a number lower than `carbonDioxideThreshold`)
 	`voc_mixture_mw`	=> The Molecular Weight (g/mol) of a reference gas or mixture that you use to convert from ppb to ug/m^3 (OPTIONAL, default = `72.66578273019740`)
     `air_quality_method`	=> Air quality calculation method used to define the Air Quality Chracteristic (OPTIONAL, default = `awair-score`, options: `awair-score`, `aqi`, `nowcast-aqi`)
 	      `endpoint`	=> The `/air-data` endpoint to use (OPTIONAL, default = `15-min-avg`, options: `15-min-avg`, `5-min-avg`, `raw`, or `latest`)

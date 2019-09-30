@@ -19,10 +19,11 @@ function Awair(log, config) {
 	this.devId = config["devId"];
 	this.serial = config["serial"] || this.devType + "_" + this.devId;
 	this.carbonDioxideThreshold = Number(config["carbonDioxideThreshold"] || 0); // ppm, 0 = OFF
+	this.carbonDioxideThresholdOff = Number(config["carbonDioxideThresholdOff"] || config["carbonDioxideThreshold"]); // ppm, same as carbonDioxideThreshold by default, should be less than or equal to carbonDioxideThreshold
 	this.vocMW = Number(config["voc_mixture_mw"] || 72.66578273019740); // Molecular Weight (g/mol) of a reference VOC gas or mixture
 	this.airQualityMethod = config["air_quality_method"] || "awair-score"; // awair-score, aqi, nowcast-aqi
 	this.userType = config["userType"] || "users/self"; // users/self, orgs/###
-	this.polling_interval = Number(config["polling_interval"] || 900); // seconds (15 mins)
+	this.polling_interval = Number(config["polling_interval"] || 900); // seconds (default: 15 mins)
 	this.limit = Number(config["limit"] || 12); // consecutive 10 second
 	this.endpoint = config["endpoint"] || "15-min-avg"; // 15-min-avg, 5-min-avg, raw, latest
 	this.url = config["url"] || "https://developer-apis.awair.is/v1/" + this.userType + "/devices/" + this.devType + "/" + this.devId + "/air-data/" + this.endpoint + "?limit=" + this.limit + "&desc=true";
@@ -91,11 +92,17 @@ Awair.prototype = {
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
+								// threshold set and CO2 HIGH
 								co2Detected = 1;
 								if(that.logging){that.log("[" + that.serial + "] CO2 HIGH: " + co2 + " > " + that.carbonDioxideThreshold)};
-							} else {
+							} else if ((that.carbonDioxideThreshold > 0) && (co2 < that.carbonDioxideThresholdOff)) {
+								// threshold set and CO2 LOW
 								co2Detected = 0;
-								if(that.logging){that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThreshold)};
+								if(that.logging){that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThresholdOff)};
+							} else {
+								// threshold NOT set
+								co2Detected = 0;
+								if(that.logging){that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThresholdOff)};
 							}
 							that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
 							break;
