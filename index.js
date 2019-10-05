@@ -94,23 +94,10 @@ Awair.prototype = {
 							var co2Detected;
 							var co2Before = that.carbonDioxideService
 								.getCharacteristic(Characteristic.CarbonDioxideDetected)
-								.on('get', function(callback) {
-									that.getValue(false, function(value) {
-										if (value != null) {
-											coh2 = value;
-											if (typeof coh2 !== "undefined") {
-												callback(null, coh2);
-											} else {
-												coh2 = 0;
-												if(that.logging){that.log("No co2Before available.")};
-												callback("", 0);
-											}
-										} else {
-											if(that.logging){that.log("co2Before was null.")};
-											callback("", 0);
-										}
-									}.bind(that));
-								}.bind(that));
+								.getValue();
+							if (co2Before) {
+								co2Before = 0;
+							}
 							
 							//Logic to determine if Carbon Dioxide should trip a change in Detected state
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
