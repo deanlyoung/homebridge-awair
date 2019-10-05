@@ -96,6 +96,8 @@ Awair.prototype = {
 								.getCharacteristic(Characteristic.CarbonDioxideDetected)
 								.getValue();
 							if (co2Before) {
+								//nothing
+							} else {
 								co2Before = 0;
 							}
 							
