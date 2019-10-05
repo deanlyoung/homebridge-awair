@@ -109,7 +109,7 @@ Awair.prototype = {
 								if(that.logging){that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThresholdOff)};
 							} else {
 								co2Detected = co2Before;
-								if(that.logging){that.log("No change in CO2 status. CO2 before: " + co2Before + " = " + co2Detected + ", CO2 Threshold On: " + carbonDioxideThreshold + " > CO2 Level: " + co2 + " > CO2 Threshold Off: " + carbonDioxideThresholdOff)};
+								if(that.logging){that.log("No change in CO2 status. CO2 before: " + co2Before + " = " + co2Detected + ", CO2 Threshold On: " + that.carbonDioxideThreshold + " > CO2 Level: " + co2 + " > CO2 Threshold Off: " + that.carbonDioxideThresholdOff)};
 							}
 							
 							//Prevent sending a Carbon Dioxide detected update if one has not occured
