@@ -88,10 +88,11 @@ Awair.prototype = {
 						case "co2":
 							// Carbon Dioxide (ppm)
 							var co2 = sensors[sensor];
-							var co2Detected;
-							var co2Before = that.getCharacteristic(Characteristic.CarbonDioxideDetected);
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
+							
+							var co2Detected;
+							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected);
 							
 							//Logic to determine if Carbon Dioxide should trip a change in Detected state
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
