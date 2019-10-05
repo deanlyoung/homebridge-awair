@@ -3,6 +3,8 @@ var request = require("request-promise");
 const packageJSON = require("./package.json");
 let aqibot = require("aqi-bot");
 
+var co2Before;
+
 module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
@@ -43,9 +45,6 @@ Awair.prototype = {
 		if(this.logging){this.log("[" + this.serial + "] url: " + this.url)};
 		
 		var that = this;
-		
-		var co2Detected;
-		var co2Before;
 		
 		return request(options)
 			.then(function(response) {
@@ -99,6 +98,8 @@ Awair.prototype = {
 							} else {
 								co2Before = 0;
 							}
+							
+							var co2Detected;
 							
 							// Logic to determine if Carbon Dioxide should trip a change in Detected state
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
