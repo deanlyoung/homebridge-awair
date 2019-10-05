@@ -44,6 +44,9 @@ Awair.prototype = {
 		
 		var that = this;
 		
+		var co2Detected;
+		var co2Before;
+		
 		return request(options)
 			.then(function(response) {
 				var data = response.data;
@@ -91,21 +94,21 @@ Awair.prototype = {
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
 							
-							var co2Detected;
-							var co2Before = that.carbonDioxideService
-								.getCharacteristic(Characteristic.CarbonDioxideDetected)
-								.getValue();
 							if (co2Before) {
-								//nothing
+								// do nothing
 							} else {
 								co2Before = 0;
 							}
 							
-							//Logic to determine if Carbon Dioxide should trip a change in Detected state
+							// Logic to determine if Carbon Dioxide should trip a change in Detected state
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
 								// threshold set and CO2 HIGH
 								co2Detected = 1;
 								if(that.logging){that.log("[" + that.serial + "] CO2 HIGH: " + co2 + " > " + that.carbonDioxideThreshold)};
+							} else if ((that.carbonDioxideThreshold > 0) && (co2 > that.carbonDioxideThresholdOff) && (co2Before == 1)) {
+								// threshold set, CO2 was HIGH, but now is dropping back down toward OFF threshold, therefore still HIGH
+								co2Detected = 1;
+								if(that.logging){that.log("[" + that.serial + "] CO2 dropping from HIGH: " + co2 + " < " + that.carbonDioxideThreshold + ", but greater than OFF threshold: " + that.carbonDioxideThresholdOff)};
 							} else if ((that.carbonDioxideThreshold > 0) && (co2 < that.carbonDioxideThresholdOff)) {
 								// threshold set and CO2 LOW
 								co2Detected = 0;
@@ -119,7 +122,7 @@ Awair.prototype = {
 								if(that.logging){that.log("No change in CO2 status. CO2 before: " + co2Before + " = " + co2Detected + ", CO2 Threshold On: " + that.carbonDioxideThreshold + " > CO2 Level: " + co2 + " > CO2 Threshold Off: " + that.carbonDioxideThresholdOff)};
 							}
 							
-							//Prevent sending a Carbon Dioxide detected update if one has not occured
+							// Prevent sending a Carbon Dioxide detected update if one has not occured
 							if ((co2Before == 0) && (co2Detected == 0)) {
 								if(that.logging){that.log("Carbon Dioxide already low.")};
 							} else if ((co2Before == 0) && (co2Detected == 1)) {
@@ -131,8 +134,10 @@ Awair.prototype = {
 								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
 								if(that.logging){that.log("Carbon Dioxide high to low.")};
 							} else {
-								if(that.logging){that.log("Carbon Dioxide state unknown.")};
+								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
+								if(that.logging){that.log("Carbon Dioxide state unknown. Setting to: " + co2Detected)};
 							}
+							co2Before = co2Detected;
 							break;
 						case "voc":
 							var voc = parseFloat(sensors[sensor]);
