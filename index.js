@@ -92,8 +92,7 @@ Awair.prototype = {
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
 							
 							var co2Detected;
-							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected).on('get', that.getCarbonDioxideState.bind(that));
-							co2Before = co2Before.getValue();
+							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected.value());
 							
 							if (co2Before) {
 								// do nothing
@@ -203,12 +202,6 @@ Awair.prototype = {
 					.setCharacteristic(Characteristic.PM10Density, "--")
 					.setCharacteristic(Characteristic.PM2_5Density, "--")
 			});
-	},
-	
-	getCarbonDioxideState: function (callback) {
-		var that = this;
-		
-		callback(null, this.value);
 	},
 	
 	convertChemicals: function(voc, atmos, temp) {
