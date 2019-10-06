@@ -93,7 +93,7 @@ Awair.prototype = {
 							
 							var co2Detected;
 							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected).on('get', that.getCarbonDioxideState.bind(that));
-							co2Before = co2Before.value();
+							co2Before = co2Before.getValue();
 							
 							if (co2Before) {
 								// do nothing
