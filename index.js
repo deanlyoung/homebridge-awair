@@ -92,7 +92,7 @@ Awair.prototype = {
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
 							
 							var co2Detected;
-							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected).on('get', that.getCarbonDioxideState.bind(that));
+							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected).on('get', that.getCarbonDioxideState.bind(that)).value();
 							
 							if (co2Before) {
 								// do nothing
