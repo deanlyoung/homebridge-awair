@@ -92,14 +92,15 @@ Awair.prototype = {
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
 							
 							var co2Detected;
-							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected).on('get', that.getState.bind(that));
+							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected).on('get', that.getCarbonDioxideState.bind(that));
 							
 							if (co2Before) {
 								// do nothing
 								if(that.logging){that.log("[" + that.serial + "] CO2Before: " + co2Before)};
 							} else {
+								if(that.logging){that.log("[" + that.serial + "] CO2Before was " + co2Before + ". Setting to 0.")};
+								
 								co2Before = 0;
-								if(that.logging){that.log("[" + that.serial + "] CO2Before was empty. Set to 0.")};
 							}
 							
 							// Logic to determine if Carbon Dioxide should trip a change in Detected state
@@ -126,14 +127,15 @@ Awair.prototype = {
 							
 							// Prevent sending a Carbon Dioxide detected update if one has not occured
 							if ((co2Before == 0) && (co2Detected == 0)) {
+								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, 0);
 								if(that.logging){that.log("Carbon Dioxide already low.")};
 							} else if ((co2Before == 0) && (co2Detected == 1)) {
-								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
+								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, 1);
 								if(that.logging){that.log("Carbon Dioxide low to high.")};
 							} else if ((co2Before == 1) && (co2Detected == 1)) {
 								if(that.logging){that.log("Carbon Dioxide already elevated.")};
 							} else if ((co2Before == 1) && (co2Detected == 0)) {
-								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
+								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, 0);
 								if(that.logging){that.log("Carbon Dioxide high to low.")};
 							} else {
 								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
@@ -200,6 +202,12 @@ Awair.prototype = {
 					.setCharacteristic(Characteristic.PM10Density, "--")
 					.setCharacteristic(Characteristic.PM2_5Density, "--")
 			});
+	},
+	
+	getCarbonDioxideState: function (callback) {
+		var that = this;
+		
+		callback(null, this.value);
 	},
 	
 	convertChemicals: function(voc, atmos, temp) {
