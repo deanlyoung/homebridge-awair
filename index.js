@@ -3,8 +3,6 @@ var request = require("request-promise");
 const packageJSON = require("./package.json");
 let aqibot = require("aqi-bot");
 
-var co2Before;
-
 module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
@@ -93,13 +91,16 @@ Awair.prototype = {
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
 							
+							var co2Detected;
+							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected).on('get', that.getState.bind(that));
+							
 							if (co2Before) {
 								// do nothing
+								if(that.logging){that.log("[" + that.serial + "] CO2Before: " + co2Before)};
 							} else {
 								co2Before = 0;
+								if(that.logging){that.log("[" + that.serial + "] CO2Before was empty. Set to 0.")};
 							}
-							
-							var co2Detected;
 							
 							// Logic to determine if Carbon Dioxide should trip a change in Detected state
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
@@ -138,7 +139,6 @@ Awair.prototype = {
 								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
 								if(that.logging){that.log("Carbon Dioxide state unknown. Setting to: " + co2Detected)};
 							}
-							co2Before = co2Detected;
 							break;
 						case "voc":
 							var voc = parseFloat(sensors[sensor]);
