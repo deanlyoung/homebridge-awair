@@ -18,13 +18,13 @@ function Awair(log, config) {
 	this.devType = config["devType"];
 	this.devId = config["devId"];
 	this.serial = config["serial"] || this.devType + "_" + this.devId;
-	this.carbonDioxideThreshold = Number(config["carbonDioxideThreshold"] || 0); // ppm, 0 = OFF
-	this.carbonDioxideThresholdOff = Number(config["carbonDioxideThresholdOff"] || config["carbonDioxideThreshold"]); // ppm, same as carbonDioxideThreshold by default, should be less than or equal to carbonDioxideThreshold
-	this.vocMW = Number(config["voc_mixture_mw"] || 72.66578273019740); // Molecular Weight (g/mol) of a reference VOC gas or mixture
+	this.carbonDioxideThreshold = Number(config["carbonDioxideThreshold"]) || 0; // ppm, 0 = OFF
+	this.carbonDioxideThresholdOff = Number(config["carbonDioxideThresholdOff"]) || Number(config["carbonDioxideThreshold"]); // ppm, same as carbonDioxideThreshold by default, should be less than or equal to carbonDioxideThreshold
+	this.vocMW = Number(config["voc_mixture_mw"]) || 72.66578273019740; // Molecular Weight (g/mol) of a reference VOC gas or mixture
 	this.airQualityMethod = config["air_quality_method"] || "awair-score"; // awair-score, aqi, nowcast-aqi
 	this.userType = config["userType"] || "users/self"; // users/self, orgs/###
-	this.polling_interval = Number(config["polling_interval"] || 900); // seconds (default: 15 mins)
-	this.limit = Number(config["limit"] || 12); // consecutive 10 second
+	this.polling_interval = Number(config["polling_interval"]) || 900; // seconds (default: 15 mins)
+	this.limit = Number(config["limit"]) || 12; // consecutive 10 second
 	this.endpoint = config["endpoint"] || "15-min-avg"; // 15-min-avg, 5-min-avg, raw, latest
 	this.url = config["url"] || "https://developer-apis.awair.is/v1/" + this.userType + "/devices/" + this.devType + "/" + this.devId + "/air-data/" + this.endpoint + "?limit=" + this.limit + "&desc=true";
 }
@@ -88,59 +88,23 @@ Awair.prototype = {
 						case "co2":
 							// Carbon Dioxide (ppm)
 							var co2 = sensors[sensor];
+							var co2Detected;
 							that.carbonDioxideService
 								.setCharacteristic(Characteristic.CarbonDioxideLevel, parseFloat(sensors[sensor]))
-							
-							var co2Detected;
-							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected).getValue();
-							
-							if (co2Before) {
-								// do nothing
-								if(that.logging){that.log("[" + that.serial + "] CO2Before: " + co2Before)};
-							} else {
-								if(that.logging){that.log("[" + that.serial + "] CO2Before was " + co2Before + ". Setting to 0.")};
-								
-								co2Before = 0;
-							}
-							
-							// Logic to determine if Carbon Dioxide should trip a change in Detected state
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
 								// threshold set and CO2 HIGH
 								co2Detected = 1;
 								if(that.logging){that.log("[" + that.serial + "] CO2 HIGH: " + co2 + " > " + that.carbonDioxideThreshold)};
-							} else if ((that.carbonDioxideThreshold > 0) && (co2 > that.carbonDioxideThresholdOff) && (co2Before == 1)) {
-								// threshold set, CO2 was HIGH, but now is dropping back down toward OFF threshold, therefore still HIGH
-								co2Detected = 1;
-								if(that.logging){that.log("[" + that.serial + "] CO2 dropping from HIGH: " + co2 + " < " + that.carbonDioxideThreshold + ", but greater than OFF threshold: " + that.carbonDioxideThresholdOff)};
 							} else if ((that.carbonDioxideThreshold > 0) && (co2 < that.carbonDioxideThresholdOff)) {
 								// threshold set and CO2 LOW
 								co2Detected = 0;
 								if(that.logging){that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThresholdOff)};
-							} else if (that.carbonDioxideThreshold == 0) {
+							} else {
 								// threshold NOT set
 								co2Detected = 0;
 								if(that.logging){that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThresholdOff)};
-							} else {
-								co2Detected = co2Before;
-								if(that.logging){that.log("No change in CO2 status. CO2 before: " + co2Before + " = " + co2Detected + ", CO2 Threshold On: " + that.carbonDioxideThreshold + " > CO2 Level: " + co2 + " > CO2 Threshold Off: " + that.carbonDioxideThresholdOff)};
 							}
-							
-							// Prevent sending a Carbon Dioxide detected update if one has not occured
-							if ((co2Before == 0) && (co2Detected == 0)) {
-								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, 0);
-								if(that.logging){that.log("Carbon Dioxide already low.")};
-							} else if ((co2Before == 0) && (co2Detected == 1)) {
-								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, 1);
-								if(that.logging){that.log("Carbon Dioxide low to high.")};
-							} else if ((co2Before == 1) && (co2Detected == 1)) {
-								if(that.logging){that.log("Carbon Dioxide already elevated.")};
-							} else if ((co2Before == 1) && (co2Detected == 0)) {
-								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, 0);
-								if(that.logging){that.log("Carbon Dioxide high to low.")};
-							} else {
-								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
-								if(that.logging){that.log("Carbon Dioxide state unknown. Setting to: " + co2Detected)};
-							}
+							that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
 							break;
 						case "voc":
 							var voc = parseFloat(sensors[sensor]);
@@ -190,7 +154,6 @@ Awair.prototype = {
 				if (that.devType != "awair-mint" && that.devType != "awair-glow-c") {
 					that.carbonDioxideService
 						.setCharacteristic(Characteristic.CarbonDioxideLevel, "--")
-						.setCharacteristic(Characteristic.CarbonDioxideDetected, "--")
 				};
 				if (that.devType == "awair-omni" || that.devType == "awair-mint") {
 					that.lightLevelService
