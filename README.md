@@ -3,7 +3,7 @@ Awair plugin for homebridge: https://github.com/nfarina/homebridge
 
 Based on the great work of [@henrypoydar](https://github.com/henrypoydar).
 
-This is a very basic plugin for Nfarina's amazing [Homebridge project](https://github.com/nfarina/homebridge). It will fetch current sensor conditions from an Awair device (e.g. Awair, Awair Glow, Awair Mint, Awair Omni, or Awair 2nd Edition) and provide available sensor readings (e.g. temperature, humidity, carbon dioxide, TVOC, and dust/PM2.5/PM10) information for HomeKit.
+This is a very basic plugin for Nfarina's amazing [Homebridge project](https://github.com/nfarina/homebridge). It will fetch current sensor conditions from an Awair device (e.g. Awair, Awair Glow, Awair Mint, Awair Omni, Awair 2nd Edition or Awair Element) and provide available sensor readings (e.g. temperature, humidity, carbon dioxide, TVOC, and dust/PM2.5/PM10) information for HomeKit.
 
 You can look at the current Awair information via HomeKit enabled Apps on your iOS device or even ask Siri for them.
 
@@ -31,7 +31,7 @@ The [Awair Developer API Documentation](https://docs.developer.getawair.com) exp
 
 Configuration sample:
 
-Add the following information to your config file (note: shown with (5) example devices: Awair, Awair Glow, Awair Mint, Awair Omni, and Awair 2nd Edition).
+Add the following information to your config file (note: shown with (6) example devices: Awair, Awair Glow, Awair Mint, Awair Omni, Awair 2nd Edition and Awair Element).
 
 See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/master/config-sample.json)
 
@@ -123,6 +123,23 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		"endpoint": "15-min-avg",
 		"polling_interval": 900,
 		"limit": 12
+	},{
+		"accessory": "Awair",
+		"name": "Example Room 6 Awair Element",
+		"token": "AAA.AAA.AAA",
+		"manufacturer": "Awair",
+		"devType": "awair-element",
+		"devId": "127",
+		"serial": "example-serial_127",
+		"model": "Awair Element",
+		"carbonDioxideThreshold": 1200,
+		"carbonDioxideThresholdOff": 1000,
+		"voc_mixture_mw": 72.66578273019740,
+		"air_quality_method": "awair-score",
+		"userType": "users/self",
+		"endpoint": "15-min-avg",
+		"polling_interval": 900,
+		"limit": 12
 	}
 ]
 ```
@@ -133,10 +150,10 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		  `name`	=> The accessory name that appears by default in HomeKit (REQUIRED, can be anything)
 		 `token`	=> Developer Token (REQUIRED, see [Installation](#installation))
 	  `manufacturer`	=> Manufacturer (OPTIONAL, default = `Awair`)
-	       `devType`	=> Device Type (REQUIRED, options: `awair`, `awair-glow`, `awair-mint`, `awair-omni`, or `awair-r2`)
+	       `devType`	=> Device Type (REQUIRED, options: `awair`, `awair-glow`, `awair-mint`, `awair-omni`, `awair-r2` or 'awair-element')
 		 `devId`	=> Device ID (REQUIRED, see [Installation](#installation))
 		`serial`	=> Serial Number (OPTIONAL, default = `devType_devId`, options: `mac-address` or `devType_devId`)
-		 `model`	=> Device Model (OPTIONAL, default = `devType`, options: `Awair`, `Awair Glow`, `Awair Mint`, `Awair Omni`, `Awair 2nd Edition`)
+		 `model`	=> Device Model (OPTIONAL, default = `devType`, options: `Awair`, `Awair Glow`, `Awair Mint`, `Awair Omni`, `Awair 2nd Edition`, 'Awair Element')
 `carbonDioxideThreshold`	=> (OPTIONAL, default = `0` [i.e. OFF], the level at which HomeKit will trigger an alert for the CO2 in ppm)
 `carbonDioxideThresholdOff`	=> (OPTIONAL, default = `0` [i.e. `carbonDioxideThreshold`], the level at which HomeKit will turn off the trigger alert for the CO2 in ppm, to ensure that it doesn't trigger on/off too frequently choose a number lower than `carbonDioxideThreshold`)
 	`voc_mixture_mw`	=> The Molecular Weight (g/mol) of a reference gas or mixture that you use to convert from ppb to ug/m^3 (OPTIONAL, default = `72.66578273019740`)
