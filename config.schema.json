@@ -108,12 +108,6 @@
         "default": 12,
         "description": "Number of consecutive 10 second data points returned per request, used for custom averaging of sensor values from `/raw` endpoint. (Default = `12` [2 minute average]"
       },
-      "url": {
-        "title": "The Awair url to poll (EDITING NOT RECOMMENDED)",
-        "type": "string",
-        "readonly": true,
-        "default": "http://developer-apis.awair.is/v1/users/self/devices/:device_type/:device_id/air-data/:endpoint?limit=:limit&desc=true"
-      },
       "logging": {
         "title": " Whether to output logs to the Homebridge logs",
         "type": "boolean",
@@ -148,7 +142,6 @@
         "polling",
         "userType",
         "limit",
-        "url",
         "logging"
       ]
     }
