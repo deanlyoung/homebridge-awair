@@ -527,11 +527,21 @@ Awair.prototype = {
 		services.push(informationService);
 		
 		var airQualityService = new Service.AirQualitySensor();
-		airQualityService
-			.setCharacteristic(Characteristic.AirQuality, "--")
-			.setCharacteristic(Characteristic.VOCDensity, "--")
-			.setCharacteristic(Characteristic.PM10Density, "--")
-			.setCharacteristic(Characteristic.PM2_5Density, "--");
+		if (this.devType == "awair-glow" || this.devType == "awair-glow-c") {
+			airQualityService
+				.setCharacteristic(Characteristic.AirQuality, "--")
+				.setCharacteristic(Characteristic.VOCDensity, "--")
+		} else if (this.devType == "awair") {
+			airQualityService
+				.setCharacteristic(Characteristic.AirQuality, "--")
+				.setCharacteristic(Characteristic.VOCDensity, "--")
+				.setCharacteristic(Characteristic.PM10Density, "--")
+		} else { // mint, omni, awair-r2, element
+			airQualityService
+				.setCharacteristic(Characteristic.AirQuality, "--")
+				.setCharacteristic(Characteristic.VOCDensity, "--")
+				.setCharacteristic(Characteristic.PM2_5Density, "--");
+		}
 		airQualityService
 			.getCharacteristic(Characteristic.VOCDensity)
 			.setProps({
