@@ -23,8 +23,8 @@
         "title": "Device Type (REQUIRED)",
         "type": "string",
         "default": "awair",
-        "enum": ["awair", "awair-glow", "awair-mint", "awair-omni","awair-r2", "awair-element"],
-        "description": "Device Type. (Options: `awair`, `awair-glow`, `awair-mint`, `awair-omni`, `awair-r2`, or 'awair-element')"
+        "enum": ["awair", "awair-glow", "awair-glow-c", "awair-mint", "awair-omni","awair-r2", "awair-element"],
+        "description": "Device Type. (Options: `awair`, `awair-glow`, `awair-glow-c`, `awair-mint`, `awair-omni`, `awair-r2`, or 'awair-element')"
       },
       "devId": {
         "title": "Device ID (REQUIRED)",
@@ -44,7 +44,7 @@
         "placeholder": "Device Type",
         "description": "Default = Device Type, Options: `Awair`, `Awair Glow`, `Awair Mint`, `Awair Omni`, `Awair 2nd Edition`, or 'Awair Element'.",
         "typeahead": {
-          "source": ["Awair", "Awair Glow", "Awair Mint", "Awair Onni", "Awair 2nd Edition", "Awair Element"]
+          "source": ["Awair", "Awair Glow", "Awair Glow C", "Awair Mint", "Awair Onni", "Awair 2nd Edition", "Awair Element"]
         }
       },
       "serial": {
@@ -63,22 +63,21 @@
         "title": "Carbon Dioxide Threshold",
         "type": "integer",
         "placeholder": 0,
-        "description": "The CO2 level at which HomeKit will turn off the trigger alert for the CO2 in ppm, to ensure that it doesn't trigger on/off too frequently choose a number lower than `carbonDioxideThreshold`. Default = 0."
+        "description": "The CO2 level at which HomeKit will turn off the trigger alert for the CO2 in ppm, to ensure that it doesn't trigger on/off too frequently choose a number lower than `carbonDioxideThreshold`. Default = `0`."
       },
       "voc_mixture_mw": {
         "title": "Reference Gas Molecular Weight",
         "type": "number",
         "placeholder": 72.66578273019740,
-        "readonly": true,
         "description": "The Molecular Weight (g/mol) of a reference gas or mixture that you use to convert from ppb to ug/m^3."
       },
       "air_quality_method": {
         "title": "Air quality calculation method",
         "type": "string",
         "placeholder": "awair-score",
-        "description": "Air quality calculation method used to define the Air Quality Chracteristic. Default = `awair-score`, Options: 'awair-score', `aqi`, or `nowcast-aqi`.",
+        "description": "Air quality calculation method used to define the Air Quality Chracteristic. Default = `awair-score`, Options: 'awair-score' and `aqi`.",
         "typeahead": {
-          "source": ["awair-score", "aqi", "nowcast-aq"]
+          "source": ["awair-score", "aqi"]
         }
       },
       "endpoint": {
@@ -105,8 +104,8 @@
       "limit": {
         "title": "Data Points Returned",
         "type": "integer",
-        "default": 12,
-        "description": "Number of consecutive 10 second data points returned per request, used for custom averaging of sensor values from `/raw` endpoint. (Default = `12` [2 minute average]"
+        "default": 1,
+        "description": "Number of consecutive 10 second 'raw' (5 or 15 minute) data points returned per request, used for custom averaging of sensor values from `/air-data/` endpoints. (Default = `1` [1 x 15 minute average]"
       },
       "logging": {
         "title": " Whether to output logs to the Homebridge logs",
