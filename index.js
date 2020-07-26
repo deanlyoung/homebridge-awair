@@ -11,10 +11,11 @@ module.exports = function(homebridge) {
 
 function Awair(log, config) {
 	this.log = log;
-	this.logging = config["logging"] || false;
-	this.token = config["token"];
+	this.logging = config["logging"] || false; // true || false (default: false = OFF)
+	this.logging_level = config["logging_level"] || 0; // 0, 1, 2, 3, ... (default: 0 = OFF)
+	this.token = config["token"]; // Bearer Token
 	this.manufacturer = config["manufacturer"] || "Awair";
-	this.devType = config["devType"];
+	this.devType = config["devType"]; // awair, awair-glow, awair-mint, awair-omni, awair-r2, awair-glow-c, awair-element
 	this.devId = config["devId"];
 	this.serial = config["serial"] || this.devType + "_" + this.devId;
 	this.carbonDioxideThreshold = Number(config["carbonDioxideThreshold"]) || 0; // ppm, 0 = OFF
@@ -39,7 +40,7 @@ Awair.prototype = {
 			}
 		};
 		
-		if(this.logging){this.log("[" + this.serial + "] url: " + this.url)};
+		if(this.logging && this.logging_level > 0){this.log("[" + this.serial + "] url: " + this.url)};
 		
 		var that = this;
 		
@@ -76,7 +77,7 @@ Awair.prototype = {
 				var temp = parseFloat(sensors.temp);
 				var atmos = 1;
 				
-				if(that.logging){that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sensors) + ", score: " + score)};
+				if(that.logging || that.logging_level > 0){that.log("[" + that.serial + "] " + that.endpoint + ": " + JSON.stringify(sensors) + ", score: " + score)};
 				
 				for (var sensor in sensors) {
 					switch (sensor) {
@@ -96,7 +97,7 @@ Awair.prototype = {
 							var co2Detected;
 							
 							var co2Before = that.carbonDioxideService.getCharacteristic(Characteristic.CarbonDioxideDetected).value;
-							if(that.logging){that.log("[" + that.serial + "] CO2Before: " + co2Before)};
+							if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] CO2Before: " + co2Before)};
 							
 							// Logic to determine if Carbon Dioxide should trip a change in Detected state
 							that.carbonDioxideService
@@ -104,45 +105,45 @@ Awair.prototype = {
 							if ((that.carbonDioxideThreshold > 0) && (co2 >= that.carbonDioxideThreshold)) {
 								// threshold set and CO2 HIGH
 								co2Detected = 1;
-								if(that.logging){that.log("[" + that.serial + "] CO2 HIGH: " + co2 + " > " + that.carbonDioxideThreshold)};
+								if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] CO2 HIGH: " + co2 + " > " + that.carbonDioxideThreshold)};
 							} else if ((that.carbonDioxideThreshold > 0) && (co2 < that.carbonDioxideThresholdOff)) {
 								// threshold set and CO2 LOW
 								co2Detected = 0;
-								if(that.logging){that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThresholdOff)};
+								if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] CO2 NORMAL: " + co2 + " < " + that.carbonDioxideThresholdOff)};
 							} else if ((that.carbonDioxideThreshold > 0) && (co2 < that.carbonDioxideThreshold) && (co2 > that.carbonDioxideThresholdOff)) {
 								// the inbetween...
-								if(that.logging){that.log("[" + that.serial + "] CO2 INBETWEEN: " + that.carbonDioxideThreshold + " > [[[" + co2 + "]]] > " + that.carbonDioxideThresholdOff)};
+								if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] CO2 INBETWEEN: " + that.carbonDioxideThreshold + " > [[[" + co2 + "]]] > " + that.carbonDioxideThresholdOff)};
 								co2Detected = co2Before;
 							} else {
 								// threshold NOT set
 								co2Detected = 0;
-								if(that.logging){that.log("[" + that.serial + "] CO2: " + co2)};
+								if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] CO2: " + co2)};
 							}
 							
 							// Prevent sending a Carbon Dioxide detected update if one has not occured
 							if ((co2Before == 0) && (co2Detected == 0)) {
 								// CO2 low already, don't send
-								if(that.logging){that.log("Carbon Dioxide already low.")};
+								if(that.logging || that.logging_level > 2){that.log("Carbon Dioxide already low.")};
 							} else if ((co2Before == 0) && (co2Detected == 1)) {
 								// CO2 low to high, send it!
 								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
-								if(that.logging){that.log("Carbon Dioxide low to high.")};
+								if(that.logging || that.logging_level > 2){that.log("Carbon Dioxide low to high.")};
 							} else if ((co2Before == 1) && (co2Detected == 1)) {
 								// CO2 high to not-quite-low-enough-yet, don't send
-								if(that.logging){that.log("Carbon Dioxide already elevated.")};
+								if(that.logging || that.logging_level > 2){that.log("Carbon Dioxide already elevated.")};
 							} else if ((co2Before == 1) && (co2Detected == 0)) {
 								// CO2 low to high, send it!
 								that.carbonDioxideService.setCharacteristic(Characteristic.CarbonDioxideDetected, co2Detected);
-								if(that.logging){that.log("Carbon Dioxide high to low.")};
+								if(that.logging || that.logging_level > 2){that.log("Carbon Dioxide high to low.")};
 							} else {
 								// CO2 unknown...
-								if(that.logging){that.log("Carbon Dioxide state unknown.")};
+								if(that.logging || that.logging_level > 2){that.log("Carbon Dioxide state unknown.")};
 							}
 							break;
 						case "voc":
 							var voc = parseFloat(sensors[sensor]);
 							var tvoc = that.convertChemicals(voc, atmos, temp);
-							if(that.logging){that.log("[" + that.serial + "]: voc (" + voc + " ppb) => tvoc (" + tvoc + " ug/m^3)")};
+							if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "]: voc (" + voc + " ppb) => tvoc (" + tvoc + " ug/m^3)")};
 							// Chemicals (ug/m^3)
 							that.airQualityService
 								.setCharacteristic(Characteristic.VOCDensity, tvoc);
@@ -170,16 +171,16 @@ Awair.prototype = {
 						case "spl_a":
 							// Sound (dBA)
 							// TODO: replace with a HomeKit service
-							if(that.logging){that.log("[" + that.serial + "] ignoring " + JSON.stringify(sensor) + ": " + parseFloat(sensors[sensor]))};
+							if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] ignoring " + JSON.stringify(sensor) + ": " + parseFloat(sensors[sensor]))};
 							break;
 						default:
-							if(that.logging){that.log("[" + that.serial + "] ignoring " + JSON.stringify(sensor) + ": " + parseFloat(sensors[sensor]))};
+							if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] ignoring " + JSON.stringify(sensor) + ": " + parseFloat(sensors[sensor]))};
 							break;
 					}
 				}
 			})
 			.catch(function(err) {
-				if(that.logging){that.log("[" + that.serial + "] " + err)};
+				if(that.logging || that.logging_level > 0){that.log("[" + that.serial + "] " + err)};
 				that.temperatureService
 					.setCharacteristic(Characteristic.CurrentTemperature, "--")
 				that.humidityService
@@ -208,7 +209,7 @@ Awair.prototype = {
 		var temp = parseFloat(temp);
 		var vocString = "(" + voc + " * " + mw + " * " + atmos + " * 101.32) / ((273.15 + " + temp + ") * 8.3144)";
 		var tvoc = (voc * mw * atmos * 101.32) / ((273.15 + temp) * 8.3144);
-		if(that.logging){that.log("[" + that.serial + "] ppb => ug/m^3 equation: " + vocString)};
+		if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] ppb => ug/m^3 equation: " + vocString)};
 		return tvoc;
 	},
 	
@@ -288,12 +289,12 @@ Awair.prototype = {
 					aqiArray.push(aqiDust);
 					break;
 				default:
-					if(that.logging){that.log("[" + that.serial + "] ignoring " + JSON.stringify(sensor) + ": " + parseFloat(sensors[sensor]))};
+					if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] ignoring " + JSON.stringify(sensor) + ": " + parseFloat(sensors[sensor]))};
 					aqiArray.push(0);
 					break;
 			}
 		}
-		if(that.logging){that.log("[" + that.serial + "] array: " + JSON.stringify(aqiArray))};
+		if(that.logging || that.logging_level > 2){that.log("[" + that.serial + "] array: " + JSON.stringify(aqiArray))};
 		return Math.max(...aqiArray);
 	},
 	
@@ -375,9 +376,16 @@ Awair.prototype = {
 		}
 		
 		if (this.polling_interval > 0) {
+			if(this.logging || this.logging_level > 1){this.log("[" + this.serial + "] polling_interval set to " + this.polling_interval)};
 			this.timer = setInterval(
 				this.getData.bind(this),
 				this.polling_interval * 1000
+			);
+		} else {
+			if(this.logging || this.logging_level > 0){this.log("[" + this.serial + "] no polling_interval set, defaulting to 900")};
+			this.timer = setInterval(
+				this.getData.bind(this),
+				900000
 			);
 		}
 		
