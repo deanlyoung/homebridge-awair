@@ -382,10 +382,10 @@ Awair.prototype = {
 				this.polling_interval * 1000
 			);
 		} else {
-			if(this.logging || this.logging_level > 0){this.log("[" + this.serial + "] no polling_interval set, defaulting to 900")};
+			if(this.logging || this.logging_level > 0){this.log("[" + this.serial + "] no polling_interval set, defaulting to " + this.polling_interval)};
 			this.timer = setInterval(
 				this.getData.bind(this),
-				900000
+				this.polling_interval * 1000
 			);
 		}
 		

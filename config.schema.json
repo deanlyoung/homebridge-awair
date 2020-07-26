@@ -75,9 +75,9 @@
 				"title": "Air quality calculation method",
 				"type": "string",
 				"placeholder": "awair-score",
-				"description": "Air quality calculation method used to define the Air Quality Chracteristic. Default = `awair-score`, Options: 'awair-score' and `aqi`.",
+				"description": "Air quality calculation method used to define the Air Quality Chracteristic. Default = `awair-score`, Options: 'awair-score' and `awair-aqi`.",
 				"typeahead": {
-					"source": ["awair-score", "aqi"]
+					"source": ["awair-score", "awair-aqi"]
 				}
 			},
 			"endpoint": {
