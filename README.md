@@ -164,6 +164,7 @@ See [config-sample.json](https://github.com/deanlyoung/homebridge-awair/blob/mas
 		 `limit`	=> Number of consecutive 10 second data points returned per request, used for custom averaging of sensor values from `/raw` endpoint (OPTIONAL, default = `12` i.e. 2 minute average)
 		   `url`	=> The Awair url to poll (OPTIONAL, default = `http://developer-apis.awair.is/v1/users/self/devices/:device_type/:device_id/air-data/:endpoint?limit=:limit&desc=true`, EDITING NOT RECOMMENDED)
 	       `logging`	=> Whether to output logs to the Homebridge logs (OPTIONAL, default = `false`)
+         `logging_level`	=> How verbosely to log (OPTIONAL, default = `0`, options: `0`, `1`, `2`, `3`)
 ```
 
 # API Response
