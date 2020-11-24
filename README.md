@@ -1,4 +1,4 @@
-#DEPRECATION
+# DEPRECATION
 This plugin is now deprecated/archived/read-only.
 
 It is recommended that you switch to the second generation Homebridge Dynamic Platform plugin: [homebridge-awair2](https://github.com/DMBlakeley/homebridge-awair2)
